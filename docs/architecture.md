@@ -101,3 +101,7 @@ A typical request follows this path:
 External AI services may later support features such as report generation. These integrations are outside the initial release and will connect to the system through the backend.
 
 Significant implementation choices and their reasoning will be recorded separately as Architectural Decision Records when they are made.
+
+## Architectural Decision Records
+
+- [ADR-001: Use Clean Architecture for the Backend](adr/001-use-clean-architecture-for-the-backend.md)
