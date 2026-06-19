@@ -3,6 +3,7 @@
 .env.*
 !.env.example
 !.env.*.example
+**/appsettings.Development.json
 
 # .NET build output
 **/bin/

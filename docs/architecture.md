@@ -18,6 +18,32 @@ ASP.NET Core Web API
 MSSQL
 ```
 
+## Technology Stack
+
+### Backend
+
+- ASP.NET Core Web API
+- .Net 10
+- Entity Framework Core
+- MSSQL
+- JWT authentication
+- FluentValidation
+- MediatR
+
+### Frontend
+
+- React
+- Vite
+- TypeScript
+- Tailwind CSS
+- Recharts
+
+### Development and Deployment
+
+- Docker
+- Docker Compose
+- GitHub
+
 ## Frontend
 
 The frontend is a single web application built with React, Vite, and TypeScript. It presents role-specific pages and actions for students, parents, teachers, principals, and administrators.
@@ -75,3 +101,7 @@ A typical request follows this path:
 External AI services may later support features such as report generation. These integrations are outside the initial release and will connect to the system through the backend.
 
 Significant implementation choices and their reasoning will be recorded separately as Architectural Decision Records when they are made.
+
+## Architectural Decision Records
+
+- [ADR-001: Use Clean Architecture for the Backend](adr/001-use-clean-architecture-for-the-backend.md)

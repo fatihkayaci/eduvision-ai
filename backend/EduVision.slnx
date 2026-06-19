@@ -1,0 +1,13 @@
+<Solution>
+  <Configurations>
+    <Platform Name="Any CPU" />
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Folder Name="/src/">
+    <Project Path="src/EduVision.Api/EduVision.Api.csproj" />
+    <Project Path="src/EduVision.Application/EduVision.Application.csproj" />
+    <Project Path="src/EduVision.Domain/EduVision.Domain.csproj" />
+    <Project Path="src/EduVision.Infrastructure/EduVision.Infrastructure.csproj" />
+  </Folder>
+</Solution>

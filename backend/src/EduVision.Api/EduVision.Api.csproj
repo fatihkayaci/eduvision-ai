@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <ItemGroup>
+    <ProjectReference Include="..\EduVision.Application\EduVision.Application.csproj" />
+    <ProjectReference Include="..\EduVision.Infrastructure\EduVision.Infrastructure.csproj" />
+    <ProjectReference Include="..\EduVision.Domain\EduVision.Domain.csproj" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+</Project>
