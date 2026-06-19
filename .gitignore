@@ -1,0 +1,42 @@
+# Local environment and secrets
+.env
+.env.*
+!.env.example
+!.env.*.example
+
+# .NET build output
+**/bin/
+**/obj/
+artifacts/
+TestResults/
+*.user
+*.suo
+
+# Node and Vite
+node_modules/
+dist/
+.vite/
+coverage/
+*.tsbuildinfo
+
+# IDE and editor files
+.vs/
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Local tooling
+.agents/
+.codex/
+
+# Logs and temporary files
+*.log
+*.tmp
+*.temp
+.cache/
+
+# Operating system files
+.DS_Store
+Thumbs.db
+Desktop.ini
