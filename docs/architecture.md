@@ -18,6 +18,32 @@ ASP.NET Core Web API
 MSSQL
 ```
 
+## Technology Stack
+
+### Backend
+
+- ASP.NET Core Web API
+- .Net 10
+- Entity Framework Core
+- MSSQL
+- JWT authentication
+- FluentValidation
+- MediatR
+
+### Frontend
+
+- React
+- Vite
+- TypeScript
+- Tailwind CSS
+- Recharts
+
+### Development and Deployment
+
+- Docker
+- Docker Compose
+- GitHub
+
 ## Frontend
 
 The frontend is a single web application built with React, Vite, and TypeScript. It presents role-specific pages and actions for students, parents, teachers, principals, and administrators.
