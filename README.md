@@ -1,60 +1,44 @@
 # EduVision
-EduVision is an AI-powered school tracking platform for teachers, students and parents.
 
-## Tech Stack
-### Backend
-- ASP.NET Core Web API
-- Entity Framework Core
-- MsSQL
-- JWT Authentication
-- FluentValidation
+EduVision is a web-based school tracking platform that brings students, parents, teachers, and school administrators together in one system.
 
-### Frontend
-- React
-- Vite
-- TypeScript
-- Tailwind CSS
-- Recharts
+## Purpose
 
-### AI
-- OpenAI API or Claude API
+Schools often manage schedules, grades, attendance, announcements, and communication through separate tools or manual processes. EduVision aims to make these processes easier to follow by providing each user with access to the information and actions relevant to their role.
 
-### DevOps
+The platform is designed to support multiple schools while keeping each school's users and educational data separate.
 
-- Docker
-- Docker Compose
-- GitHub
+## Who Is It For?
 
-## Architecture
+- **Students** can follow their schedules, grades, attendance, and announcements.
+- **Parents** can monitor the educational progress of their children.
+- **Teachers** can manage course-related student information and academic processes.
+- **Principals** can oversee their school's academic and administrative activities.
+- **Administrators** can manage platform-level operations.
 
-EduVision will be built with a 4-layer Clean Architecture approach.
+## Planned Features
 
-The backend will be structured around rich domain models, CQRS and clear separation of responsibilities.
+- Class schedules
+- Grade tracking
+- Attendance tracking
+- Announcements and notifications
+- Messaging
+- Reports and visual summaries
+- Role-specific dashboards
+- Multi-school support
 
-### Backend Layers
+AI-assisted reporting may be introduced in a future version and is not part of the initial release.
 
-- **EduVision.Api**  
-  Handles HTTP requests, controllers, authentication, authorization, Swagger and global exception handling.
+## Project Status
 
-- **EduVision.Application**  
-  Contains CQRS commands, queries, handlers, DTOs, FluentValidation validators, application exceptions, service interfaces and use-case specific business logic.
+EduVision is currently in the planning and early development stage. Features and technical details will evolve as the project is implemented.
 
-- **EduVision.Domain**  
-  Contains rich domain entities, enums, value objects, domain rules and domain exceptions.
+## Documentation
 
-- **EduVision.Infrastructure**  
-  Contains Entity Framework Core database access, DbContext, migrations, entity configurations, JWT implementation, password hashing, seed data and external AI service integrations.
+- [System Architecture](docs/architecture.md)
 
-### Architectural Decisions
+Architectural decisions will be documented separately as ADRs when they are made during development.
 
-- 4-layer Clean Architecture
-- Rich domain model instead of anemic entities
-- CQRS pattern in the Application layer
-- MediatR for command/query handling
-- FluentValidation for request validation in the Application layer
-- Domain exceptions in the Domain layer
-- Application-specific exceptions such as NotFound and ForbiddenAccess in the Application layer
-- EF Core through an application-level DbContext interface
-- JWT-based authentication
-- Role-based and resource-based authorization
-- AI integrations isolated in the Infrastructure layer
+## License
+
+This project is licensed under the terms described in the [LICENSE](LICENSE) file.

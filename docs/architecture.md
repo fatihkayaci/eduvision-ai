@@ -2,13 +2,7 @@
 
 ## Overview
 
-EduVision is a web-based student tracking system designed for multiple schools. It allows school administrators, teachers, students, and parents to follow educational processes such as schedules, grades, attendance, announcements, messaging, and reporting.
-
-Each school operates within its own workspace. Access to data is restricted according to the user's role and their relationship with a school, course, or student.
-
-## System Overview
-
-EduVision consists of a web client, a backend API, and a relational database.
+EduVision is composed of a web client, a backend API, and a relational database. The client communicates with the API over HTTPS using JSON. The backend applies business rules, controls access, and manages persistent data.
 
 ```text
 User
@@ -26,25 +20,58 @@ MSSQL
 
 ## Frontend
 
-The frontend is a single React application built with Vite and TypeScript. It provides different pages and actions for students, parents, teachers, principals, and administrators.
+The frontend is a single web application built with React, Vite, and TypeScript. It presents role-specific pages and actions for students, parents, teachers, principals, and administrators.
 
-The frontend is responsible for presentation and user interaction. Business rules and security controls are enforced by the backend.
+The frontend is responsible for presentation, navigation, and user interaction. It communicates with the backend through HTTP requests and does not enforce business or security rules on its own.
 
 ## Backend
 
 The backend is an ASP.NET Core Web API organized into four layers:
 
-- **Domain:** Core business models and rules.
-- **Application:** Application use cases and contracts.
-- **Infrastructure:** Database access and external service implementations.
-- **API:** HTTP endpoints, authentication, and application configuration.
+### Domain
+
+Contains the core business models, behaviors, and rules. It does not depend on the other application layers.
+
+### Application
+
+Coordinates application use cases and defines the contracts required to execute them. It depends on the Domain layer but remains independent of infrastructure details.
+
+### Infrastructure
+
+Implements technical capabilities required by the application, including database access, authentication services, and future external integrations.
+
+### API
+
+Provides the HTTP entry point to the system. It receives requests, applies authentication and authorization, invokes application use cases, and returns responses to the client.
+
+Dependencies point toward the inner layers:
+
+```text
+API ---------> Application ---------> Domain
+ |                  ^
+ |                  |
+ +----------> Infrastructure
+```
 
 ## Data and Access
 
-MSSQL stores application data. School data is isolated so that users cannot access another school's resources without authorization.
+Application data is stored in MSSQL. EduVision supports multiple schools, and school-owned data must remain isolated between them.
 
-Authentication is handled by the backend. Authorization considers both the user's role and their relationship with the requested resource.
+The backend controls access using both the user's role and their relationship with the requested school, course, or student. Frontend visibility rules improve the user experience but are not treated as a security boundary.
+
+## Request Flow
+
+A typical request follows this path:
+
+1. A user performs an action in the React application.
+2. The frontend sends an HTTP request to the API.
+3. The API authenticates the user and checks access.
+4. The Application layer executes the relevant use case using Domain rules.
+5. The Infrastructure layer performs any required database or external service operation.
+6. The API returns the result to the frontend.
 
 ## Future Integrations
 
-External AI services may be introduced in later versions for features such as reporting. AI integration is not part of the initial release.
+External AI services may later support features such as report generation. These integrations are outside the initial release and will connect to the system through the backend.
+
+Significant implementation choices and their reasoning will be recorded separately as Architectural Decision Records when they are made.
