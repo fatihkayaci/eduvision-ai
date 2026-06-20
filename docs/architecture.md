@@ -105,3 +105,5 @@ Significant implementation choices and their reasoning will be recorded separate
 ## Architectural Decision Records
 
 - [ADR-001: Use Clean Architecture for the Backend](adr/001-use-clean-architecture-for-the-backend.md)
+- [ADR-002: Use Entity Framework Core and MSSQL](adr/002-use-entity-framework-core-and-mssql.md)
+- [ADR-003: Model School Access Through Memberships](adr/003-model-school-access-through-memberships.md)
