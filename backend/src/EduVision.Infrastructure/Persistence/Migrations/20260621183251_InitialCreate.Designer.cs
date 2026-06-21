@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EduVision.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260621151958_InitialCreate")]
+    [Migration("20260621183251_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -71,11 +71,6 @@ namespace EduVision.Infrastructure.Persistence.Migrations
                     b.Property<Guid>("SchoolId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("StudentNumber")
-                        .HasMaxLength(50)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(50)");
-
                     b.Property<DateTimeOffset?>("UpdatedAtUtc")
                         .HasColumnType("datetimeoffset");
 
@@ -93,10 +88,6 @@ namespace EduVision.Infrastructure.Persistence.Migrations
                         .IsUnique();
 
                     b.HasIndex("SchoolId", "Role");
-
-                    b.HasIndex("SchoolId", "StudentNumber")
-                        .IsUnique()
-                        .HasFilter("[StudentNumber] IS NOT NULL");
 
                     b.HasIndex("SchoolId", "Username")
                         .IsUnique();
