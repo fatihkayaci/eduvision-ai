@@ -25,10 +25,6 @@ public sealed class SchoolMembershipConfiguration : IEntityTypeConfiguration<Sch
             .HasConversion<int>()
             .IsRequired();
 
-        builder.Property(membership => membership.StudentNumber)
-            .HasMaxLength(50)
-            .IsUnicode(false);
-
         builder.Property(membership => membership.CreatedAtUtc)
             .IsRequired();
 
@@ -47,10 +43,6 @@ public sealed class SchoolMembershipConfiguration : IEntityTypeConfiguration<Sch
 
         builder.HasIndex(membership => new { membership.SchoolId, membership.Username })
             .IsUnique();
-
-        builder.HasIndex(membership => new { membership.SchoolId, membership.StudentNumber })
-            .IsUnique()
-            .HasFilter("[StudentNumber] IS NOT NULL");
 
         builder.HasIndex(membership => new { membership.SchoolId, membership.Role });
     }

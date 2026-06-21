@@ -55,7 +55,6 @@ namespace EduVision.Infrastructure.Persistence.Migrations
                     SchoolId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Username = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     Role = table.Column<int>(type: "int", nullable: false),
-                    StudentNumber = table.Column<string>(type: "varchar(50)", unicode: false, maxLength: 50, nullable: true),
                     CreatedAtUtc = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     UpdatedAtUtc = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
                 },
@@ -99,13 +98,6 @@ namespace EduVision.Infrastructure.Persistence.Migrations
                 name: "IX_SchoolMemberships_SchoolId_Role",
                 table: "SchoolMemberships",
                 columns: new[] { "SchoolId", "Role" });
-
-            migrationBuilder.CreateIndex(
-                name: "IX_SchoolMemberships_SchoolId_StudentNumber",
-                table: "SchoolMemberships",
-                columns: new[] { "SchoolId", "StudentNumber" },
-                unique: true,
-                filter: "[StudentNumber] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "IX_SchoolMemberships_SchoolId_Username",
