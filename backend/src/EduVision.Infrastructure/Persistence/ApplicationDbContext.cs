@@ -12,6 +12,8 @@ public sealed class ApplicationDbContext(DbContextOptions<ApplicationDbContext> 
 
     public DbSet<SchoolMembership> SchoolMemberships => Set<SchoolMembership>();
 
+    public DbSet<StudentProfile> StudentProfiles => Set<StudentProfile>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);

@@ -77,6 +77,24 @@ namespace EduVision.Infrastructure.Persistence.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "StudentProfiles",
+                columns: table => new
+                {
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    StudentNumber = table.Column<string>(type: "varchar(50)", unicode: false, maxLength: 50, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_StudentProfiles", x => x.UserId);
+                    table.ForeignKey(
+                        name: "FK_StudentProfiles_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_SchoolMemberships_SchoolId_Role",
                 table: "SchoolMemberships",
@@ -125,6 +143,9 @@ namespace EduVision.Infrastructure.Persistence.Migrations
         {
             migrationBuilder.DropTable(
                 name: "SchoolMemberships");
+
+            migrationBuilder.DropTable(
+                name: "StudentProfiles");
 
             migrationBuilder.DropTable(
                 name: "Schools");
