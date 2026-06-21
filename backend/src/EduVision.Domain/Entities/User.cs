@@ -16,6 +16,8 @@ public sealed class User : BaseEntity
 
     public bool IsSystemAdmin { get; private set; }
 
+    public StudentProfile? StudentProfile { get; private set; }
+
     private User()
     {
     }
@@ -46,5 +48,9 @@ public sealed class User : BaseEntity
             PasswordHash = passwordHash,
             IsSystemAdmin = isSystemAdmin
         };
+    }
+    public void AssignStudentProfile(string studentNumber)
+    {
+        StudentProfile = StudentProfile.Create(this.Id, studentNumber);
     }
 }

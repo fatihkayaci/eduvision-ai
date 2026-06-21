@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EduVision.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260620205612_InitialCreate")]
+    [Migration("20260621151958_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -107,6 +107,22 @@ namespace EduVision.Infrastructure.Persistence.Migrations
                         });
                 });
 
+            modelBuilder.Entity("EduVision.Domain.Entities.StudentProfile", b =>
+                {
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("StudentNumber")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(50)");
+
+                    b.HasKey("UserId");
+
+                    b.ToTable("StudentProfiles", (string)null);
+                });
+
             modelBuilder.Entity("EduVision.Domain.Entities.User", b =>
                 {
                     b.Property<Guid>("Id")
@@ -180,6 +196,22 @@ namespace EduVision.Infrastructure.Persistence.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("EduVision.Domain.Entities.StudentProfile", b =>
+                {
+                    b.HasOne("EduVision.Domain.Entities.User", "User")
+                        .WithOne("StudentProfile")
+                        .HasForeignKey("EduVision.Domain.Entities.StudentProfile", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("EduVision.Domain.Entities.User", b =>
+                {
+                    b.Navigation("StudentProfile");
                 });
 #pragma warning restore 612, 618
         }
