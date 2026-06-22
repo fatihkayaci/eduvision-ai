@@ -18,9 +18,10 @@ public sealed class UserRepository(ApplicationDbContext dbContext) : IUserReposi
                 cancellationToken);
     }
 
-    public Task<bool> HasRoleAsync(Guid userId, UserRole role, CancellationToken cancellationToken = default)
+    public Task<SchoolMembership?> GetMembershipAsync(Guid userId, UserRole role, CancellationToken cancellationToken = default)
     {
         return dbContext.SchoolMemberships
-            .AnyAsync(m => m.UserId == userId && m.Role == role, cancellationToken);
+            .AsNoTracking()
+            .SingleOrDefaultAsync(m => m.UserId == userId && m.Role == role, cancellationToken);
     }
 }
