@@ -14,7 +14,7 @@ public sealed class StudentParentConfiguration : IEntityTypeConfiguration<Studen
 
         builder.Property(sp => sp.CreatedAtUtc).IsRequired();
 
-        builder.HasOne<User>()
+        builder.HasOne(sp => sp.Student)
             .WithMany()
             .HasForeignKey(sp => sp.StudentId)
             .OnDelete(DeleteBehavior.Cascade);
