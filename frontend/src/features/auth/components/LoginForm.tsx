@@ -8,22 +8,22 @@ import { login } from '../api/authApi'
 import type { UserRole, LoginRequest } from '../types'
 
 const roles: { id: UserRole; label: string; initial: string }[] = [
-  { id: 'student',  label: 'Öğrenci',   initial: 'Ö' },
-  { id: 'parent',   label: 'Veli',       initial: 'V' },
-  { id: 'teacher',  label: 'Öğretmen',   initial: 'T' },
-  { id: 'admin',    label: 'Yönetici',   initial: 'Y' },
+  { id: 'Student',    label: 'Öğrenci',   initial: 'Ö' },
+  { id: 'Parent',     label: 'Veli',       initial: 'V' },
+  { id: 'Teacher',    label: 'Öğretmen',   initial: 'T' },
+  { id: 'Principal',  label: 'Müdür',      initial: 'M' },
 ]
 
 const roleLabels: Record<UserRole, string> = {
-  student: 'Öğrenci olarak giriş yap',
-  parent:  'Veli olarak giriş yap',
-  teacher: 'Öğretmen olarak giriş yap',
-  admin:   'Yönetici olarak giriş yap',
+  Student:   'Öğrenci olarak giriş yap',
+  Parent:    'Veli olarak giriş yap',
+  Teacher:   'Öğretmen olarak giriş yap',
+  Principal: 'Müdür olarak giriş yap',
 }
 
 export function LoginForm() {
   const navigate = useNavigate()
-  const [selectedRole, setSelectedRole] = useState<UserRole>('student')
+  const [selectedRole, setSelectedRole] = useState<UserRole>('Student')
   const [showPassword, setShowPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -43,7 +43,7 @@ export function LoginForm() {
     try {
       const response = await login(payload)
       localStorage.setItem('accessToken', response.accessToken)
-      navigate('/dashboard')
+      navigate(`/${response.role.toLowerCase()}/dashboard`)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Bir hata oluştu')
     } finally {

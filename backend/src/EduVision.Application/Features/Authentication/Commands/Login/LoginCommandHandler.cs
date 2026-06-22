@@ -18,12 +18,18 @@ public sealed class LoginCommandHandler(
             throw new Exception("Email or password is incorrect.");
         }
 
-        var accessToken = tokenService.Create(user);
+        if (!await userRepository.HasRoleAsync(user.Id, request.Role, cancellationToken))
+        {
+            throw new Exception("User does not have the specified role.");
+        }
+
+        var accessToken = tokenService.Create(user, request.Role);
 
         return new LoginResponse(
             user.Id,
             user.FirstName,
             user.LastName,
+            request.Role,
             accessToken.Value,
             accessToken.ExpiresAtUtc);
     }

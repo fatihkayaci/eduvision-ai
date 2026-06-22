@@ -1,4 +1,4 @@
-export type UserRole = 'student' | 'parent' | 'teacher' | 'admin'
+export type UserRole = 'Student' | 'Parent' | 'Teacher' | 'Principal'
 
 export interface LoginRequest {
   email: string
@@ -10,13 +10,7 @@ export interface LoginResponse {
   userId: string
   firstName: string
   lastName: string
+  role: UserRole
   accessToken: string
   expiresAtUtc: string
-}
-
-export interface AuthUser {
-  id: string
-  email: string
-  fullName: string
-  role: UserRole
 }
