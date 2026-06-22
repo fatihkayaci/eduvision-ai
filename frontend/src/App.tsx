@@ -3,6 +3,7 @@ import { LoginPage } from '@/pages/LoginPage'
 import { PrincipalDashboardPage } from '@/pages/principal/DashboardPage'
 import { TeacherDashboardPage } from '@/pages/teacher/DashboardPage'
 import { StudentDashboardPage } from '@/pages/student/DashboardPage'
+import { ParentLayout } from '@/pages/parent/Layout'
 import { ParentDashboardPage } from '@/pages/parent/DashboardPage'
 
 function App() {
@@ -13,7 +14,9 @@ function App() {
         <Route path="/principal/dashboard" element={<PrincipalDashboardPage />} />
         <Route path="/teacher/dashboard"   element={<TeacherDashboardPage />} />
         <Route path="/student/dashboard"   element={<StudentDashboardPage />} />
-        <Route path="/parent/dashboard"    element={<ParentDashboardPage />} />
+        <Route path="/parent" element={<ParentLayout />}>
+          <Route path="dashboard" element={<ParentDashboardPage />} />
+        </Route>
       </Routes>
     </BrowserRouter>
   )
