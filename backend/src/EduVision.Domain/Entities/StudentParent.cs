@@ -6,6 +6,8 @@ public sealed class StudentParent : BaseEntity
 
     public Guid ParentId { get; private set; }
 
+    public User Student { get; private set; } = null!;
+
     private StudentParent()
     {
     }
