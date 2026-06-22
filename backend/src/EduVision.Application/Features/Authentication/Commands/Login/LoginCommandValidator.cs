@@ -13,5 +13,10 @@ public sealed class LoginCommandValidator : AbstractValidator<LoginCommand>
 
         RuleFor(command => command.Password)
             .NotEmpty();
+
+        RuleFor(command => command.Role)
+            .IsInEnum()
+            .Must(role => role != Domain.Enums.UserRole.None)
+            .WithMessage("A valid role must be specified.");
     }
 }

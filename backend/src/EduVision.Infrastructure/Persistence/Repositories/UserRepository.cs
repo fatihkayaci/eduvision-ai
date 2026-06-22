@@ -1,5 +1,6 @@
 using EduVision.Application.Comman.Interfaces;
 using EduVision.Domain.Entities;
+using EduVision.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 
 namespace EduVision.Infrastructure.Persistence.Repositories;
@@ -15,5 +16,11 @@ public sealed class UserRepository(ApplicationDbContext dbContext) : IUserReposi
             .SingleOrDefaultAsync(
                 user => user.Email == email.Trim(),
                 cancellationToken);
+    }
+
+    public Task<bool> HasRoleAsync(Guid userId, UserRole role, CancellationToken cancellationToken = default)
+    {
+        return dbContext.SchoolMemberships
+            .AnyAsync(m => m.UserId == userId && m.Role == role, cancellationToken);
     }
 }

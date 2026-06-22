@@ -3,6 +3,7 @@ using System.Security.Claims;
 using System.Text;
 using EduVision.Application.Comman.Interfaces;
 using EduVision.Domain.Entities;
+using EduVision.Domain.Enums;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 
@@ -31,7 +32,7 @@ public sealed class TokenService : ITokenService
         }
     }
 
-    public AccessToken Create(User user)
+    public AccessToken Create(User user, UserRole role)
     {
         var now = DateTimeOffset.UtcNow;
         var expiresAtUtc = now.AddMinutes(_expirationMinutes);
@@ -42,7 +43,8 @@ public sealed class TokenService : ITokenService
             new Claim(JwtRegisteredClaimNames.Email, user.Email),
             new Claim(JwtRegisteredClaimNames.GivenName, user.FirstName),
             new Claim(JwtRegisteredClaimNames.FamilyName, user.LastName),
-            new Claim("is_system_admin", user.IsSystemAdmin.ToString().ToLowerInvariant())
+            new Claim("is_system_admin", user.IsSystemAdmin.ToString().ToLowerInvariant()),
+            new Claim(ClaimTypes.Role, role.ToString())
         };
 
         var signingCredentials = new SigningCredentials(
