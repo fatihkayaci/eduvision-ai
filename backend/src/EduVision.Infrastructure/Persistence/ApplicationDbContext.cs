@@ -14,6 +14,12 @@ public sealed class ApplicationDbContext(DbContextOptions<ApplicationDbContext> 
 
     public DbSet<StudentProfile> StudentProfiles => Set<StudentProfile>();
 
+    public DbSet<ClassRoom> ClassRooms => Set<ClassRoom>();
+
+    public DbSet<ClassEnrollment> ClassEnrollments => Set<ClassEnrollment>();
+
+    public DbSet<StudentParent> StudentParents => Set<StudentParent>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
