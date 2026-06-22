@@ -5,7 +5,7 @@ namespace EduVision.Application.Comman.Interfaces;
 
 public interface ITokenService
 {
-    AccessToken Create(User user, UserRole role);
+    AccessToken Create(User user, UserRole role, Guid schoolId);
 }
 
 public sealed record AccessToken(string Value, DateTimeOffset ExpiresAtUtc);

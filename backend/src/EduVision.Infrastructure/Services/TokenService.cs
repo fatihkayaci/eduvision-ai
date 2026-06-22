@@ -32,7 +32,7 @@ public sealed class TokenService : ITokenService
         }
     }
 
-    public AccessToken Create(User user, UserRole role)
+    public AccessToken Create(User user, UserRole role, Guid schoolId)
     {
         var now = DateTimeOffset.UtcNow;
         var expiresAtUtc = now.AddMinutes(_expirationMinutes);
@@ -44,7 +44,8 @@ public sealed class TokenService : ITokenService
             new Claim(JwtRegisteredClaimNames.GivenName, user.FirstName),
             new Claim(JwtRegisteredClaimNames.FamilyName, user.LastName),
             new Claim("is_system_admin", user.IsSystemAdmin.ToString().ToLowerInvariant()),
-            new Claim(ClaimTypes.Role, role.ToString())
+            new Claim(ClaimTypes.Role, role.ToString()),
+            new Claim("school_id", schoolId.ToString())
         };
 
         var signingCredentials = new SigningCredentials(
