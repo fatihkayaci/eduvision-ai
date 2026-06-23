@@ -21,6 +21,16 @@ export interface AttendanceRecord {
   note: string | null
 }
 
+export interface Assignment {
+  id: string
+  title: string
+  description: string | null
+  type: 'Homework' | 'Exam'
+  fileUrl: string | null
+  startDate: string
+  dueDate: string
+}
+
 export interface StudentAttendances {
   totalAbsent: number
   totalExcused: number
