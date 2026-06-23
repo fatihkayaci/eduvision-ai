@@ -4,7 +4,7 @@ public sealed class StudentProfile
 {
     public Guid UserId { get; private set; }
     public string StudentNumber { get; private set; } = string.Empty;
-    //public int? ClassroomId { get; set; }
+    public ClassEnrollment Enrollment {get; private set;} = null!;
     public User User { get; set; } = null!;
 
     private StudentProfile()

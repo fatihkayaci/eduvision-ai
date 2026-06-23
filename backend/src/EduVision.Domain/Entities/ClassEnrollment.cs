@@ -6,6 +6,8 @@ public sealed class ClassEnrollment : BaseEntity
 
     public Guid StudentId { get; private set; }
 
+    public ClassRoom ClassRoom { get; private set; } = null!;
+
     private ClassEnrollment()
     {
     }
