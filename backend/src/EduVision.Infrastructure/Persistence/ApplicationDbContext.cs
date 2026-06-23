@@ -20,6 +20,12 @@ public sealed class ApplicationDbContext(DbContextOptions<ApplicationDbContext> 
 
     public DbSet<StudentParent> StudentParents => Set<StudentParent>();
 
+    public DbSet<Course> Courses => Set<Course>();
+
+    public DbSet<ClassroomCourse> ClassroomCourses => Set<ClassroomCourse>();
+
+    public DbSet<Grade> Grades => Set<Grade>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
