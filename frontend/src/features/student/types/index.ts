@@ -14,3 +14,15 @@ export interface StudentCourse {
   courseName: string
   grades: Grade[]
 }
+
+export interface AttendanceRecord {
+  date: string
+  type: 'Absent' | 'Excused'
+  note: string | null
+}
+
+export interface StudentAttendances {
+  totalAbsent: number
+  totalExcused: number
+  records: AttendanceRecord[]
+}
