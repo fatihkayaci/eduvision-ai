@@ -18,9 +18,6 @@ public sealed class GetStudentProfileQueryHandler(IStudentRepository studentRepo
             : null;
 
         return new GetStudentProfileResponse(
-            profile.UserId,
-            profile.User.FirstName,
-            profile.User.LastName,
             profile.StudentNumber,
             classroom);
     }

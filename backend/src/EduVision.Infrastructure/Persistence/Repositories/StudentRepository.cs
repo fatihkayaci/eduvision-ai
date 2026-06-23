@@ -10,7 +10,6 @@ public sealed class StudentRepository(ApplicationDbContext dbContext) : IStudent
     {
         return dbContext.StudentProfiles
             .AsNoTracking()
-            .Include(sp => sp.User)
             .Include(sp => sp.Enrollment)
                 .ThenInclude(e => e.ClassRoom)
             .FirstOrDefaultAsync(sp => sp.UserId == studentId, cancellationToken);
