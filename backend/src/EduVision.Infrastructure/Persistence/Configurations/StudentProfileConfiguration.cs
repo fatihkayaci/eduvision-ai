@@ -21,5 +21,10 @@ public sealed class StudentProfileConfiguration : IEntityTypeConfiguration<Stude
             .WithOne(user => user.StudentProfile)
             .HasForeignKey<StudentProfile>(profile => profile.UserId)
             .OnDelete(DeleteBehavior.Cascade);
+
+        builder.HasOne(profile => profile.Enrollment)
+            .WithOne()
+            .HasForeignKey<ClassEnrollment>(e => e.StudentId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }
