@@ -1,36 +1,17 @@
 import { useState, useEffect } from 'react'
 import { NavLink, Outlet } from 'react-router-dom'
 import { LayoutDashboard, Users, ClipboardList, UserX, BookOpen, Sparkles, ChevronDown, Plus } from 'lucide-react'
+import { decodeToken, initials } from '@/lib/token'
 
 const navItems = [
-  { to: '/teacher/dashboard', icon: LayoutDashboard, label: 'Genel Bakış' },
-  { to: '/teacher/classes',   icon: Users,           label: 'Sınıflarım' },
-  { to: '/teacher/grades',    icon: ClipboardList,   label: 'Not Girişi' },
-  { to: '/teacher/attendance',icon: UserX,           label: 'Yoklama' },
-  { to: '/teacher/exams',     icon: BookOpen,        label: 'Ödev & Sınav' },
+  { to: '/teacher/dashboard',  icon: LayoutDashboard, label: 'Genel Bakış' },
+  { to: '/teacher/classes',    icon: Users,           label: 'Sınıflarım' },
+  { to: '/teacher/grades',     icon: ClipboardList,   label: 'Not Girişi' },
+  { to: '/teacher/attendance', icon: UserX,           label: 'Yoklama' },
+  { to: '/teacher/exams',      icon: BookOpen,        label: 'Ödev & Sınav' },
 ]
 
 const mockClasses = ['9-A · Matematik', '9-B · Matematik', '10-A · Matematik']
-
-interface TokenPayload {
-  given_name: string
-  family_name: string
-}
-
-function decodeToken(token: string): TokenPayload {
-  const base64 = token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/')
-  const json = decodeURIComponent(
-    atob(base64)
-      .split('')
-      .map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
-      .join('')
-  )
-  return JSON.parse(json)
-}
-
-function initials(firstName: string, lastName: string) {
-  return `${firstName[0]}${lastName[0]}`.toUpperCase()
-}
 
 function greeting() {
   const hour = new Date().getHours()
@@ -142,13 +123,11 @@ export function TeacherLayout() {
           </div>
 
           <div className="flex items-center gap-3">
-            {/* Not gir */}
             <button className="flex items-center gap-1.5 rounded-lg bg-primary px-3 py-1.5 text-sm font-medium text-white hover:bg-primary/90 transition-colors">
               <Plus className="h-3.5 w-3.5" />
               Not gir
             </button>
 
-            {/* Sınıf seçici */}
             <div className="relative">
               <button
                 onClick={() => setClassDropdownOpen(v => !v)}
@@ -177,7 +156,6 @@ export function TeacherLayout() {
               )}
             </div>
 
-            {/* Avatar */}
             <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-white text-xs font-bold">
               {firstName && lastName ? initials(firstName, lastName) : '..'}
             </div>

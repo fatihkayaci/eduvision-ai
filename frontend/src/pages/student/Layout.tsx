@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react'
 import { NavLink, Outlet } from 'react-router-dom'
 import { LayoutDashboard, FileText, UserX, BookOpen, Calendar, Sparkles, ChevronDown } from 'lucide-react'
-
-const BASE_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:5163'
+import { decodeToken, initials } from '@/lib/token'
+import { getStudentProfile } from '@/features/student/api/studentApi'
+import type { StudentProfile } from '@/features/student/types'
 
 const navItems = [
   { to: '/student/dashboard',   icon: LayoutDashboard, label: 'Genel Bakış' },
@@ -11,32 +12,6 @@ const navItems = [
   { to: '/student/exams',       icon: BookOpen,         label: 'Ödevler & Sınavlar' },
   { to: '/student/schedule',    icon: Calendar,         label: 'Ders Programı' },
 ]
-
-interface StudentProfile {
-  studentNumber: string
-  classroom: string | null
-}
-
-interface TokenPayload {
-  sub: string
-  given_name: string
-  family_name: string
-}
-
-function decodeToken(token: string): TokenPayload {
-  const base64 = token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/')
-  const json = decodeURIComponent(
-    atob(base64)
-      .split('')
-      .map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
-      .join('')
-  )
-  return JSON.parse(json)
-}
-
-function initials(firstName: string, lastName: string) {
-  return `${firstName[0]}${lastName[0]}`.toUpperCase()
-}
 
 export function StudentLayout() {
   const [profile, setProfile] = useState<StudentProfile | null>(null)
@@ -51,11 +26,8 @@ export function StudentLayout() {
     setFirstName(payload.given_name)
     setLastName(payload.family_name)
 
-    fetch(`${BASE_URL}/api/student/${payload.sub}/profile`, {
-      headers: { Authorization: `Bearer ${token}` },
-    })
-      .then((res) => res.json())
-      .then((data: StudentProfile) => setProfile(data))
+    getStudentProfile(payload.sub, token)
+      .then(setProfile)
       .catch(console.error)
   }, [])
 
@@ -148,20 +120,15 @@ export function StudentLayout() {
           </div>
 
           <div className="flex items-center gap-3">
-            {/* Dönem seçici */}
             <button className="flex items-center gap-1.5 rounded-lg border border-border bg-white px-3 py-1.5 text-sm font-medium text-foreground hover:bg-muted transition-colors">
               Güz Dönemi
               <ChevronDown className="h-3.5 w-3.5 text-muted-foreground" />
             </button>
 
-            {/* Bildirim */}
-            <div className="relative">
-              <div className="flex h-8 w-8 items-center justify-center rounded-full border border-border bg-white">
-                <div className="h-2 w-2 rounded-full bg-primary" />
-              </div>
+            <div className="flex h-8 w-8 items-center justify-center rounded-full border border-border bg-white">
+              <div className="h-2 w-2 rounded-full bg-primary" />
             </div>
 
-            {/* Avatar */}
             <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-white text-xs font-bold">
               {firstName && lastName ? initials(firstName, lastName) : '..'}
             </div>
