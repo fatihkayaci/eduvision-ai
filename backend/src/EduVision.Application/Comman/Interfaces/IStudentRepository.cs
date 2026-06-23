@@ -7,4 +7,5 @@ public interface IStudentRepository
     Task<StudentProfile?> GetProfileAsync(Guid studentId, CancellationToken cancellationToken = default);
     Task<List<ClassroomCourse>> GetCoursesWithGradesAsync(Guid studentId, CancellationToken cancellationToken = default);
     Task<List<Attendance>> GetAttendancesAsync(Guid studentId, CancellationToken cancellationToken = default);
+    Task<List<Assignment>> GetAssignmentsAsync(Guid studentId, CancellationToken cancellationToken = default);
 }

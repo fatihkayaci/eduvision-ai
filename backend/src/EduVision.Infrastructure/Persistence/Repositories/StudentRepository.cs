@@ -15,6 +15,24 @@ public sealed class StudentRepository(ApplicationDbContext dbContext) : IStudent
             .FirstOrDefaultAsync(sp => sp.UserId == studentId, cancellationToken);
     }
 
+    public async Task<List<Assignment>> GetAssignmentsAsync(Guid studentId, CancellationToken cancellationToken = default)
+    {
+        var classroomId = await dbContext.ClassEnrollments
+            .AsNoTracking()
+            .Where(e => e.StudentId == studentId)
+            .Select(e => e.ClassRoomId)
+            .FirstOrDefaultAsync(cancellationToken);
+
+        if (classroomId == Guid.Empty)
+            return [];
+
+        return await dbContext.Assignments
+            .AsNoTracking()
+            .Where(a => a.ClassRoomId == classroomId)
+            .OrderBy(a => a.DueDate)
+            .ToListAsync(cancellationToken);
+    }
+
     public Task<List<Attendance>> GetAttendancesAsync(Guid studentId, CancellationToken cancellationToken = default)
     {
         return dbContext.Attendances
