@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react'
 import { NavLink, Outlet } from 'react-router-dom'
 import { LayoutDashboard, FileText, UserX, BookOpen, Sparkles } from 'lucide-react'
-
-const BASE_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:5163'
+import { decodeToken, initials } from '@/lib/token'
+import { getStudents } from '@/features/parent/api/parentApi'
+import type { Student } from '@/features/parent/types'
 
 const navItems = [
   { to: '/parent/dashboard',  icon: LayoutDashboard, label: 'Genel Bakış' },
@@ -10,33 +11,6 @@ const navItems = [
   { to: '/parent/attendance', icon: UserX,            label: 'Devamsızlık' },
   { to: '/parent/exams',      icon: BookOpen,         label: 'Ödevler & Sınavlar' },
 ]
-
-interface Student {
-  studentId: string
-  firstName: string
-  lastName: string
-}
-
-interface TokenPayload {
-  sub: string
-  given_name: string
-  family_name: string
-}
-
-function decodeToken(token: string): TokenPayload {
-  const base64 = token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/')
-  const json = decodeURIComponent(
-    atob(base64)
-      .split('')
-      .map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
-      .join('')
-  )
-  return JSON.parse(json)
-}
-
-function initials(firstName: string, lastName: string) {
-  return `${firstName[0]}${lastName[0]}`.toUpperCase()
-}
 
 export function ParentLayout() {
   const [students, setStudents] = useState<Student[]>([])
@@ -50,11 +24,8 @@ export function ParentLayout() {
     const payload = decodeToken(token)
     setParentName(`${payload.given_name} ${payload.family_name}`)
 
-    fetch(`${BASE_URL}/api/parent/${payload.sub}/students`, {
-      headers: { Authorization: `Bearer ${token}` },
-    })
-      .then((res) => res.json())
-      .then((data: Student[]) => {
+    getStudents(payload.sub, token)
+      .then((data) => {
         setStudents(data)
         if (data.length > 0) setActiveStudentId(data[0].studentId)
       })
@@ -150,7 +121,6 @@ export function ParentLayout() {
             <p className="text-sm text-muted-foreground mt-0.5">2024-2025 Güz Dönemi</p>
           </div>
 
-          {/* Childer */}
           {students.length > 0 && (
             <div className="flex items-center gap-1.5">
               <span className="text-xs text-muted-foreground mr-1">Çocuk:</span>

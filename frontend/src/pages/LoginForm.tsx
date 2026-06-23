@@ -4,8 +4,8 @@ import { Eye, EyeOff } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { login } from '../api/authApi'
-import type { UserRole, LoginRequest } from '../types'
+import { login } from '@/features/auth/api/authApi'
+import type { UserRole, LoginRequest } from '@/features/auth/types'
 
 const roles: { id: UserRole; label: string; initial: string }[] = [
   { id: 'Student',    label: 'Öğrenci',   initial: 'Ö' },

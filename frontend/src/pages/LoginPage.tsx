@@ -1,5 +1,5 @@
 import { GraduationCap } from 'lucide-react'
-import { LoginForm } from '@/features/auth/components/LoginForm'
+import { LoginForm } from '@/pages/LoginForm'
 
 const stats = [
   { value: '4',  label: 'rol' },
