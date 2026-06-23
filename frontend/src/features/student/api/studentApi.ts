@@ -1,4 +1,4 @@
-import type { StudentProfile, StudentCourse, StudentAttendances, Assignment } from '../types'
+import type { StudentProfile, StudentCourse, StudentAttendances, Assignment, ScheduleEntry } from '../types'
 
 const BASE_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:5163'
 
@@ -18,6 +18,16 @@ export async function getStudentCourses(studentId: string, token: string): Promi
   })
 
   if (!res.ok) throw new Error('Dersler alınamadı')
+
+  return res.json()
+}
+
+export async function getStudentSchedule(studentId: string, token: string): Promise<ScheduleEntry[]> {
+  const res = await fetch(`${BASE_URL}/api/student/${studentId}/schedule`, {
+    headers: { Authorization: `Bearer ${token}` },
+  })
+
+  if (!res.ok) throw new Error('Ders programı alınamadı')
 
   return res.json()
 }

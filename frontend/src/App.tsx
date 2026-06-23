@@ -7,6 +7,7 @@ import { StudentDashboardPage } from '@/pages/student/DashboardPage'
 import { GradesPage } from '@/pages/student/GradesPage'
 import { AttendancePage } from '@/pages/student/AttendancePage'
 import { AssignmentsPage } from '@/pages/student/AssignmentsPage'
+import { SchedulePage } from '@/pages/student/SchedulePage'
 import { StudentLayout } from '@/pages/student/Layout'
 import { ParentLayout } from '@/pages/parent/Layout'
 import { ParentDashboardPage } from '@/pages/parent/DashboardPage'
@@ -25,6 +26,7 @@ function App() {
           <Route path="grades" element={<GradesPage />} />
           <Route path="attendance" element={<AttendancePage />} />
           <Route path="exams" element={<AssignmentsPage />} />
+          <Route path="schedule" element={<SchedulePage />} />
         </Route>
         <Route path="/parent" element={<ParentLayout />}>
           <Route path="dashboard" element={<ParentDashboardPage />} />

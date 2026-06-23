@@ -21,6 +21,13 @@ export interface AttendanceRecord {
   note: string | null
 }
 
+export interface ScheduleEntry {
+  courseName: string
+  weekday: string
+  startTime: string
+  endTime: string
+}
+
 export interface Assignment {
   id: string
   title: string
