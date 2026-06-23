@@ -33,7 +33,6 @@ public sealed class ClassRoomConfiguration : IEntityTypeConfiguration<ClassRoom>
             .HasForeignKey(c => c.HomeRoomTeacherId)
             .OnDelete(DeleteBehavior.Restrict);
 
-        // Aynı okulda 9-A'dan 2 tane olamaz
         builder.HasIndex(c => new { c.SchoolId, c.GradeLevel, c.Section })
             .IsUnique();
     }

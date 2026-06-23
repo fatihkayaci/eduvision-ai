@@ -29,7 +29,6 @@ public sealed class ClassroomCourseConfiguration : IEntityTypeConfiguration<Clas
             .HasForeignKey(cc => cc.TeacherId)
             .OnDelete(DeleteBehavior.Restrict);
 
-        // Aynı ders aynı sınıfta bir kez olabilir
         builder.HasIndex(cc => new { cc.ClassRoomId, cc.CourseId })
             .IsUnique();
     }

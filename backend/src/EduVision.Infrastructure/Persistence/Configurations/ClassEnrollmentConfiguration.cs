@@ -19,7 +19,6 @@ public sealed class ClassEnrollmentConfiguration : IEntityTypeConfiguration<Clas
             .HasForeignKey(e => e.ClassRoomId)
             .OnDelete(DeleteBehavior.Cascade);
 
-        // Bir öğrenci sadece 1 sınıfta olabilir
         builder.HasIndex(e => e.StudentId)
             .IsUnique();
     }
