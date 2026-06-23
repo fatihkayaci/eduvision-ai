@@ -1,3 +1,4 @@
+using EduVision.Application.Features.Student.Queries.GetStudentCourses;
 using EduVision.Application.Features.Student.Queries.GetStudentProfile;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -16,6 +17,13 @@ public sealed class StudentController(ISender sender) : ControllerBase
         if (response is null)
             return NotFound();
 
+        return Ok(response);
+    }
+
+    [HttpGet("{studentId:guid}/courses")]
+    public async Task<ActionResult<List<GetStudentCoursesResponse>>> GetCourses(Guid studentId, CancellationToken cancellationToken)
+    {
+        var response = await sender.Send(new GetStudentCoursesQuery(studentId), cancellationToken);
         return Ok(response);
     }
 }

@@ -12,6 +12,8 @@ public sealed class ClassroomCourse : BaseEntity
 
     public Course Course { get; private set; } = null!;
 
+    public ICollection<Grade> Grades { get; private set; } = [];
+
     private ClassroomCourse()
     {
     }
