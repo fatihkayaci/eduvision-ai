@@ -13,8 +13,6 @@ const navItems = [
 ]
 
 interface StudentProfile {
-  firstName: string
-  lastName: string
   studentNumber: string
   classroom: string | null
 }
@@ -42,12 +40,16 @@ function initials(firstName: string, lastName: string) {
 
 export function StudentLayout() {
   const [profile, setProfile] = useState<StudentProfile | null>(null)
+  const [firstName, setFirstName] = useState('')
+  const [lastName, setLastName] = useState('')
 
   useEffect(() => {
     const token = localStorage.getItem('accessToken')
     if (!token) return
 
     const payload = decodeToken(token)
+    setFirstName(payload.given_name)
+    setLastName(payload.family_name)
 
     fetch(`${BASE_URL}/api/student/${payload.sub}/profile`, {
       headers: { Authorization: `Bearer ${token}` },
@@ -57,8 +59,6 @@ export function StudentLayout() {
       .catch(console.error)
   }, [])
 
-  const firstName = profile?.firstName ?? ''
-  const lastName = profile?.lastName ?? ''
   const classroom = profile?.classroom ?? ''
 
   return (
