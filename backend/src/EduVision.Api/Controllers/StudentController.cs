@@ -1,3 +1,4 @@
+using EduVision.Application.Features.Student.Queries.GetStudentAttendances;
 using EduVision.Application.Features.Student.Queries.GetStudentCourses;
 using EduVision.Application.Features.Student.Queries.GetStudentProfile;
 using MediatR;
@@ -24,6 +25,13 @@ public sealed class StudentController(ISender sender) : ControllerBase
     public async Task<ActionResult<List<GetStudentCoursesResponse>>> GetCourses(Guid studentId, CancellationToken cancellationToken)
     {
         var response = await sender.Send(new GetStudentCoursesQuery(studentId), cancellationToken);
+        return Ok(response);
+    }
+
+    [HttpGet("{studentId:guid}/attendances")]
+    public async Task<ActionResult<GetStudentAttendancesResponse>> GetAttendances(Guid studentId, CancellationToken cancellationToken)
+    {
+        var response = await sender.Send(new GetStudentAttendancesQuery(studentId), cancellationToken);
         return Ok(response);
     }
 }

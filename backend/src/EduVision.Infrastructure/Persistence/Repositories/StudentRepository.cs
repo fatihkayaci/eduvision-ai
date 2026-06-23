@@ -15,6 +15,15 @@ public sealed class StudentRepository(ApplicationDbContext dbContext) : IStudent
             .FirstOrDefaultAsync(sp => sp.UserId == studentId, cancellationToken);
     }
 
+    public Task<List<Attendance>> GetAttendancesAsync(Guid studentId, CancellationToken cancellationToken = default)
+    {
+        return dbContext.Attendances
+            .AsNoTracking()
+            .Where(a => a.StudentId == studentId)
+            .OrderBy(a => a.Date)
+            .ToListAsync(cancellationToken);
+    }
+
     public async Task<List<ClassroomCourse>> GetCoursesWithGradesAsync(Guid studentId, CancellationToken cancellationToken = default)
     {
         var classroomId = await dbContext.ClassEnrollments

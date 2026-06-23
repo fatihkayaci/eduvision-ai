@@ -24,7 +24,6 @@ public sealed class StudentParentConfiguration : IEntityTypeConfiguration<Studen
             .HasForeignKey(sp => sp.ParentId)
             .OnDelete(DeleteBehavior.Restrict);
 
-        // Aynı öğrenci-veli çifti 2 kez kaydedilemez
         builder.HasIndex(sp => new { sp.StudentId, sp.ParentId })
             .IsUnique();
     }
