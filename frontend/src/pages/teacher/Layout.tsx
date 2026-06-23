@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react'
 import { NavLink, Outlet } from 'react-router-dom'
 import { LayoutDashboard, Users, ClipboardList, UserX, BookOpen, Sparkles, ChevronDown, Plus } from 'lucide-react'
 import { decodeToken, initials } from '@/lib/token'
+import { getCourses } from '@/features/teacher/api/teacherApi'
+import type { TeacherCourse } from '@/features/teacher/types'
 
 const navItems = [
   { to: '/teacher/dashboard',  icon: LayoutDashboard, label: 'Genel Bakış' },
@@ -10,8 +12,6 @@ const navItems = [
   { to: '/teacher/attendance', icon: UserX,           label: 'Yoklama' },
   { to: '/teacher/exams',      icon: BookOpen,        label: 'Ödev & Sınav' },
 ]
-
-const mockClasses = ['9-A · Matematik', '9-B · Matematik', '10-A · Matematik']
 
 function greeting() {
   const hour = new Date().getHours()
@@ -27,7 +27,8 @@ function todayLabel() {
 export function TeacherLayout() {
   const [firstName, setFirstName] = useState('')
   const [lastName, setLastName] = useState('')
-  const [activeClass, setActiveClass] = useState(mockClasses[0])
+  const [courses, setCourses] = useState<TeacherCourse[]>([])
+  const [activeCourse, setActiveCourse] = useState<TeacherCourse | null>(null)
   const [classDropdownOpen, setClassDropdownOpen] = useState(false)
 
   useEffect(() => {
@@ -36,7 +37,18 @@ export function TeacherLayout() {
     const payload = decodeToken(token)
     setFirstName(payload.given_name)
     setLastName(payload.family_name)
+
+    getCourses(payload.sub, token)
+      .then((data) => {
+        setCourses(data)
+        if (data.length > 0) setActiveCourse(data[0])
+      })
+      .catch(console.error)
   }, [])
+
+  const activeLabel = activeCourse
+    ? `${activeCourse.gradeLevel}-${activeCourse.section} · ${activeCourse.courseName}`
+    : '...'
 
   return (
     <div className="flex h-screen bg-[#f4f6fb] overflow-hidden">
@@ -102,7 +114,9 @@ export function TeacherLayout() {
             <p className="text-xs font-semibold text-foreground truncate">
               {firstName ? `${firstName} ${lastName}` : '...'}
             </p>
-            <p className="text-[10px] text-muted-foreground">Matematik · Öğretmen</p>
+            <p className="text-[10px] text-muted-foreground">
+              {activeCourse ? `${activeCourse.courseName} · Öğretmen` : 'Öğretmen'}
+            </p>
           </div>
         </div>
 
@@ -131,27 +145,31 @@ export function TeacherLayout() {
             <div className="relative">
               <button
                 onClick={() => setClassDropdownOpen(v => !v)}
-                className="flex items-center gap-1.5 rounded-lg border border-border bg-white px-3 py-1.5 text-sm font-medium text-foreground hover:bg-muted transition-colors"
+                className="flex items-center justify-between gap-1.5 w-44 rounded-lg border border-border bg-white px-3 py-1.5 text-sm font-medium text-foreground hover:bg-muted transition-colors"
               >
-                {activeClass}
+                {activeLabel}
                 <ChevronDown className="h-3.5 w-3.5 text-muted-foreground" />
               </button>
               {classDropdownOpen && (
                 <div className="absolute right-0 top-full mt-1 w-44 rounded-lg border border-border bg-white shadow-md z-10">
-                  {mockClasses.map((c) => (
-                    <button
-                      key={c}
-                      onClick={() => { setActiveClass(c); setClassDropdownOpen(false) }}
-                      className={[
-                        'w-full px-3 py-2 text-left text-sm transition-colors',
-                        c === activeClass
-                          ? 'bg-primary/10 text-primary font-medium'
-                          : 'text-foreground hover:bg-muted',
-                      ].join(' ')}
-                    >
-                      {c}
-                    </button>
-                  ))}
+                  {courses.map((c) => {
+                    const label = `${c.gradeLevel}-${c.section} · ${c.courseName}`
+                    const isActive = c.classroomCourseId === activeCourse?.classroomCourseId
+                    return (
+                      <button
+                        key={c.classroomCourseId}
+                        onClick={() => { setActiveCourse(c); setClassDropdownOpen(false) }}
+                        className={[
+                          'w-full px-3 py-2 text-left text-sm transition-colors',
+                          isActive
+                            ? 'bg-primary/10 text-primary font-medium'
+                            : 'text-foreground hover:bg-muted',
+                        ].join(' ')}
+                      >
+                        {label}
+                      </button>
+                    )
+                  })}
                 </div>
               )}
             </div>
