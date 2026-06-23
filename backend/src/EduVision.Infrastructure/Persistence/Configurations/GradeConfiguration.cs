@@ -30,7 +30,7 @@ public sealed class GradeConfiguration : IEntityTypeConfiguration<Grade>
             .OnDelete(DeleteBehavior.Cascade);
 
         builder.HasOne<ClassroomCourse>()
-            .WithMany()
+            .WithMany(cc => cc.Grades)
             .HasForeignKey(g => g.ClassroomCourseId)
             .OnDelete(DeleteBehavior.Restrict);
     }
