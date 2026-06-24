@@ -7,6 +7,8 @@ public sealed class Assignment : BaseEntity
 {
     public Guid ClassRoomId { get; private set; }
 
+    public Guid TermId { get; private set; }
+
     public string Title { get; private set; } = string.Empty;
 
     public string? Description { get; private set; }
@@ -27,6 +29,7 @@ public sealed class Assignment : BaseEntity
 
     public static Assignment Create(
         Guid classRoomId,
+        Guid termId,
         string title,
         AssignmentType type,
         DateOnly startDate,
@@ -35,6 +38,7 @@ public sealed class Assignment : BaseEntity
         string? fileUrl = null)
     {
         if (classRoomId == Guid.Empty) throw new DomainValidationException("ClassRoom ID cannot be empty.");
+        if (termId == Guid.Empty) throw new DomainValidationException("Term ID cannot be empty.");
         if (string.IsNullOrWhiteSpace(title)) throw new DomainValidationException("Assignment title cannot be empty.");
         if (type == default) throw new DomainValidationException("Assignment type must be specified.");
         if (dueDate < startDate) throw new DomainValidationException("Due date cannot be before start date.");
@@ -42,6 +46,7 @@ public sealed class Assignment : BaseEntity
         return new Assignment
         {
             ClassRoomId = classRoomId,
+            TermId = termId,
             Title = title.Trim(),
             Description = description?.Trim(),
             Type = type,

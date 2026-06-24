@@ -7,6 +7,8 @@ public sealed class Grade : BaseEntity
 {
     public Guid StudentId { get; private set; }
 
+    public Guid TermId { get; private set; }
+
     public Guid ClassroomCourseId { get; private set; }
 
     public decimal Value { get; private set; }
@@ -19,9 +21,10 @@ public sealed class Grade : BaseEntity
     {
     }
 
-    public static Grade Create(Guid studentId, Guid classroomCourseId, decimal value, ExamType examType, DateOnly date)
+    public static Grade Create(Guid studentId, Guid termId, Guid classroomCourseId, decimal value, ExamType examType, DateOnly date)
     {
         if (studentId == Guid.Empty) throw new DomainValidationException("Student ID cannot be empty.");
+        if (termId == Guid.Empty) throw new DomainValidationException("Term ID cannot be empty.");
         if (classroomCourseId == Guid.Empty) throw new DomainValidationException("ClassroomCourse ID cannot be empty.");
         if (value is < 0 or > 100) throw new DomainValidationException("Grade value must be between 0 and 100.");
         if (examType == ExamType.None) throw new DomainValidationException("Exam type must be specified.");
@@ -29,6 +32,7 @@ public sealed class Grade : BaseEntity
         return new Grade
         {
             StudentId = studentId,
+            TermId = termId,
             ClassroomCourseId = classroomCourseId,
             Value = value,
             ExamType = examType,

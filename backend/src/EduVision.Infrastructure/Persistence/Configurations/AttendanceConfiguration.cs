@@ -28,6 +28,11 @@ public sealed class AttendanceConfiguration : IEntityTypeConfiguration<Attendanc
             .HasForeignKey(a => a.StudentId)
             .OnDelete(DeleteBehavior.Cascade);
 
+        builder.HasOne<Term>()
+            .WithMany()
+            .HasForeignKey(a => a.TermId)
+            .OnDelete(DeleteBehavior.Restrict);
+
         builder.HasIndex(a => new { a.StudentId, a.Date })
             .IsUnique();
     }
