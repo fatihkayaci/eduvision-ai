@@ -1,8 +1,12 @@
 using System.Text.Json.Serialization;
 using EduVision.Application;
 using EduVision.Infrastructure;
+using EduVision.Api.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+builder.Services.AddProblemDetails();
 
 builder.Services.AddControllers()
     .AddJsonOptions(o => o.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
@@ -34,6 +38,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseExceptionHandler();
 app.UseCors("Frontend");
 app.UseAuthorization();
 

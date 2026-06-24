@@ -1,4 +1,5 @@
 using EduVision.Domain.Enums;
+using EduVision.Domain.Exceptions;
 
 namespace EduVision.Domain.Entities;
 
@@ -20,11 +21,8 @@ public sealed class ClassSchedule : BaseEntity
 
     public static ClassSchedule Create(Guid classroomCourseId, Weekday dayOfWeek, TimeOnly startTime, TimeOnly endTime)
     {
-        if (classroomCourseId == Guid.Empty)
-            throw new ArgumentException("ClassroomCourse ID cannot be empty.", nameof(classroomCourseId));
-
-        if (endTime <= startTime)
-            throw new ArgumentException("End time must be after start time.", nameof(endTime));
+        if (classroomCourseId == Guid.Empty) throw new DomainValidationException("ClassroomCourse ID cannot be empty.");
+        if (endTime <= startTime) throw new DomainValidationException("End time must be after start time.");
 
         return new ClassSchedule
         {

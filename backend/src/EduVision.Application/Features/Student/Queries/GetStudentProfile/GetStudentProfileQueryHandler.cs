@@ -1,17 +1,18 @@
 using EduVision.Application.Comman.Interfaces;
+using EduVision.Domain.Exceptions;
 using MediatR;
 
 namespace EduVision.Application.Features.Student.Queries.GetStudentProfile;
 
 public sealed class GetStudentProfileQueryHandler(IStudentRepository studentRepository)
-    : IRequestHandler<GetStudentProfileQuery, GetStudentProfileResponse?>
+    : IRequestHandler<GetStudentProfileQuery, GetStudentProfileResponse>
 {
-    public async Task<GetStudentProfileResponse?> Handle(GetStudentProfileQuery request, CancellationToken cancellationToken)
+    public async Task<GetStudentProfileResponse> Handle(GetStudentProfileQuery request, CancellationToken cancellationToken)
     {
         var profile = await studentRepository.GetProfileAsync(request.StudentId, cancellationToken);
 
         if (profile is null)
-            return null;
+            throw new NotFoundException("StudentProfile", request.StudentId);
 
         var classroom = profile.Enrollment is not null
             ? $"{profile.Enrollment.ClassRoom.GradeLevel}{profile.Enrollment.ClassRoom.Section}"

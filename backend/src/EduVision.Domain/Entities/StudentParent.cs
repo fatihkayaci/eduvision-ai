@@ -1,3 +1,5 @@
+using EduVision.Domain.Exceptions;
+
 namespace EduVision.Domain.Entities;
 
 public sealed class StudentParent : BaseEntity
@@ -14,11 +16,8 @@ public sealed class StudentParent : BaseEntity
 
     public static StudentParent Create(Guid studentId, Guid parentId)
     {
-        if (studentId == Guid.Empty)
-            throw new ArgumentException("Student ID cannot be empty.", nameof(studentId));
-
-        if (parentId == Guid.Empty)
-            throw new ArgumentException("Parent ID cannot be empty.", nameof(parentId));
+        if (studentId == Guid.Empty) throw new DomainValidationException("Student ID cannot be empty.");
+        if (parentId == Guid.Empty) throw new DomainValidationException("Parent ID cannot be empty.");
 
         return new StudentParent
         {

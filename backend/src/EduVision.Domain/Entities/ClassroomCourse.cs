@@ -1,3 +1,5 @@
+using EduVision.Domain.Exceptions;
+
 namespace EduVision.Domain.Entities;
 
 public sealed class ClassroomCourse : BaseEntity
@@ -20,14 +22,9 @@ public sealed class ClassroomCourse : BaseEntity
 
     public static ClassroomCourse Create(Guid classRoomId, Guid courseId, Guid teacherId)
     {
-        if (classRoomId == Guid.Empty)
-            throw new ArgumentException("ClassRoom ID cannot be empty.", nameof(classRoomId));
-
-        if (courseId == Guid.Empty)
-            throw new ArgumentException("Course ID cannot be empty.", nameof(courseId));
-
-        if (teacherId == Guid.Empty)
-            throw new ArgumentException("Teacher ID cannot be empty.", nameof(teacherId));
+        if (classRoomId == Guid.Empty) throw new DomainValidationException("ClassRoom ID cannot be empty.");
+        if (courseId == Guid.Empty) throw new DomainValidationException("Course ID cannot be empty.");
+        if (teacherId == Guid.Empty) throw new DomainValidationException("Teacher ID cannot be empty.");
 
         return new ClassroomCourse
         {

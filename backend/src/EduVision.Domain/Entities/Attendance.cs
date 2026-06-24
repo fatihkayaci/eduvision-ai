@@ -1,4 +1,5 @@
 using EduVision.Domain.Enums;
+using EduVision.Domain.Exceptions;
 
 namespace EduVision.Domain.Entities;
 
@@ -18,11 +19,8 @@ public sealed class Attendance : BaseEntity
 
     public static Attendance Create(Guid studentId, DateOnly date, AttendanceType type, string? note = null)
     {
-        if (studentId == Guid.Empty)
-            throw new ArgumentException("Student ID cannot be empty.", nameof(studentId));
-
-        if (type == default)
-            throw new ArgumentException("Attendance type must be specified.", nameof(type));
+        if (studentId == Guid.Empty) throw new DomainValidationException("Student ID cannot be empty.");
+        if (type == default) throw new DomainValidationException("Attendance type must be specified.");
 
         return new Attendance
         {
