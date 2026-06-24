@@ -2,8 +2,8 @@ import { useState, useEffect } from 'react'
 import { ChevronDown, ChevronUp } from 'lucide-react'
 import { useOutletContext } from 'react-router-dom'
 import { decodeToken } from '@/lib/token'
-import { getStudentCourses } from '@/features/student/api/studentApi'
-import type { StudentCourse, Grade } from '@/features/student/types'
+import { getStudentCourses, getStudentRank } from '@/features/student/api/studentApi'
+import type { StudentCourse, Grade, StudentRank } from '@/features/student/types'
 import type { StudentLayoutContext } from './Layout'
 
 const MONTHS = ['Oca', 'Şub', 'Mar', 'Nis', 'May', 'Haz', 'Tem', 'Ağu', 'Eyl', 'Eki', 'Kas', 'Ara']
@@ -51,6 +51,7 @@ function buildGradeNames(grades: Grade[]): string[] {
 export function GradesPage() {
   const { termId } = useOutletContext<StudentLayoutContext>()
   const [courses, setCourses] = useState<StudentCourse[]>([])
+  const [rank, setRank] = useState<StudentRank | null>(null)
   const [expandedId, setExpandedId] = useState<string | null>(null)
 
   useEffect(() => {
@@ -58,7 +59,13 @@ export function GradesPage() {
     const token = localStorage.getItem('accessToken')
     if (!token) return
     const { sub } = decodeToken(token)
-    getStudentCourses(sub, termId, token).then(setCourses).catch(console.error)
+    Promise.all([
+      getStudentCourses(sub, termId, token),
+      getStudentRank(sub, termId, token),
+    ]).then(([c, r]) => {
+      setCourses(c)
+      setRank(r)
+    }).catch(console.error)
   }, [termId])
 
   const averages = courses.map(c => courseAverage(c.grades))
@@ -95,6 +102,19 @@ export function GradesPage() {
               <span className="text-white/70 font-normal"> · {averages[bestIdx]?.toFixed(0)}</span>
             </p>
           </div>
+
+          {rank && (
+            <>
+              <div className="w-px h-12 bg-white/20" />
+              <div>
+                <p className="text-xs text-white/60 mb-1">Sınıf Sırası</p>
+                <p className="font-semibold text-sm">
+                  {rank.rank}. sıra
+                  <span className="text-white/70 font-normal"> / {rank.totalStudents} öğrenci</span>
+                </p>
+              </div>
+            </>
+          )}
 
           <div className="ml-auto text-xs text-white/50">
             {courses.length} ders
