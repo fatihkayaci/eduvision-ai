@@ -10,6 +10,8 @@ public sealed class ApplicationDbContext(DbContextOptions<ApplicationDbContext> 
 
     public DbSet<School> Schools => Set<School>();
 
+    public DbSet<Term> Terms => Set<Term>();
+
     public DbSet<SchoolMembership> SchoolMemberships => Set<SchoolMembership>();
 
     public DbSet<StudentProfile> StudentProfiles => Set<StudentProfile>();

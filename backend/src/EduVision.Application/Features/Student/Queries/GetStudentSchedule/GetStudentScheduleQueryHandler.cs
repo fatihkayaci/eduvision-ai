@@ -8,7 +8,7 @@ public sealed class GetStudentScheduleQueryHandler(IStudentRepository studentRep
 {
     public async Task<List<GetStudentScheduleResponse>> Handle(GetStudentScheduleQuery request, CancellationToken cancellationToken)
     {
-        var schedule = await studentRepository.GetScheduleAsync(request.StudentId, cancellationToken);
+        var schedule = await studentRepository.GetScheduleAsync(request.StudentId, request.TermId, cancellationToken);
 
         return schedule
             .Select(cs => new GetStudentScheduleResponse(

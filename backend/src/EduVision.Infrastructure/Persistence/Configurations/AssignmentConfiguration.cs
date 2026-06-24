@@ -36,5 +36,10 @@ public sealed class AssignmentConfiguration : IEntityTypeConfiguration<Assignmen
             .WithMany()
             .HasForeignKey(a => a.ClassRoomId)
             .OnDelete(DeleteBehavior.Cascade);
+
+        builder.HasOne<Term>()
+            .WithMany()
+            .HasForeignKey(a => a.TermId)
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }

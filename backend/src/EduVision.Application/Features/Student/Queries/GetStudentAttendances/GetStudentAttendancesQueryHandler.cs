@@ -9,7 +9,7 @@ public sealed class GetStudentAttendancesQueryHandler(IStudentRepository student
 {
     public async Task<GetStudentAttendancesResponse> Handle(GetStudentAttendancesQuery request, CancellationToken cancellationToken)
     {
-        var records = await studentRepository.GetAttendancesAsync(request.StudentId, cancellationToken);
+        var records = await studentRepository.GetAttendancesAsync(request.StudentId, request.TermId, cancellationToken);
 
         var totalAbsent = records.Count(a => a.Type == AttendanceType.Absent);
         var totalExcused = records.Count(a => a.Type == AttendanceType.Excused);

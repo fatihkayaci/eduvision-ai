@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react'
+import { useOutletContext } from 'react-router-dom'
 import { decodeToken } from '@/lib/token'
 import { getStudentAssignments } from '@/features/student/api/studentApi'
 import type { Assignment } from '@/features/student/types'
+import type { StudentLayoutContext } from './Layout'
 
 const MONTHS = ['Oca', 'Şub', 'Mar', 'Nis', 'May', 'Haz', 'Tem', 'Ağu', 'Eyl', 'Eki', 'Kas', 'Ara']
 
@@ -86,15 +88,17 @@ function GroupSection({ label, items }: { label: string; items: Assignment[] }) 
 type Tab = 'upcoming' | 'completed' | 'all'
 
 export function AssignmentsPage() {
+  const { termId } = useOutletContext<StudentLayoutContext>()
   const [assignments, setAssignments] = useState<Assignment[]>([])
   const [tab, setTab] = useState<Tab>('upcoming')
 
   useEffect(() => {
+    if (!termId) return
     const token = localStorage.getItem('accessToken')
     if (!token) return
     const { sub } = decodeToken(token)
-    getStudentAssignments(sub, token).then(setAssignments).catch(console.error)
-  }, [])
+    getStudentAssignments(sub, termId, token).then(setAssignments).catch(console.error)
+  }, [termId])
 
   const today = new Date()
   today.setHours(0, 0, 0, 0)

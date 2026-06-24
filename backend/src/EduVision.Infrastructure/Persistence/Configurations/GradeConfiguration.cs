@@ -29,6 +29,11 @@ public sealed class GradeConfiguration : IEntityTypeConfiguration<Grade>
             .HasForeignKey(g => g.StudentId)
             .OnDelete(DeleteBehavior.Cascade);
 
+        builder.HasOne<Term>()
+            .WithMany()
+            .HasForeignKey(g => g.TermId)
+            .OnDelete(DeleteBehavior.Restrict);
+
         builder.HasOne<ClassroomCourse>()
             .WithMany(cc => cc.Grades)
             .HasForeignKey(g => g.ClassroomCourseId)

@@ -1,3 +1,11 @@
+export interface Term {
+  id: string
+  name: string
+  year: number
+  startDate: string
+  endDate: string
+}
+
 export interface StudentProfile {
   studentNumber: string
   classroom: string | null

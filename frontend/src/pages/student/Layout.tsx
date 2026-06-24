@@ -1,9 +1,14 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { NavLink, Outlet } from 'react-router-dom'
 import { LayoutDashboard, FileText, UserX, BookOpen, Calendar, Sparkles, ChevronDown } from 'lucide-react'
 import { decodeToken, initials } from '@/lib/token'
-import { getStudentProfile } from '@/features/student/api/studentApi'
-import type { StudentProfile } from '@/features/student/types'
+import { getStudentProfile, getTerms } from '@/features/student/api/studentApi'
+import type { StudentProfile, Term } from '@/features/student/types'
+
+export interface StudentLayoutContext {
+  termId: string
+  termEndDate: string
+}
 
 const navItems = [
   { to: '/student/dashboard',   icon: LayoutDashboard, label: 'Genel Bakış' },
@@ -17,6 +22,10 @@ export function StudentLayout() {
   const [profile, setProfile] = useState<StudentProfile | null>(null)
   const [firstName, setFirstName] = useState('')
   const [lastName, setLastName] = useState('')
+  const [terms, setTerms] = useState<Term[]>([])
+  const [selectedTermId, setSelectedTermId] = useState('')
+  const [isTermOpen, setIsTermOpen] = useState(false)
+  const termRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     const token = localStorage.getItem('accessToken')
@@ -26,12 +35,28 @@ export function StudentLayout() {
     setFirstName(payload.given_name)
     setLastName(payload.family_name)
 
-    getStudentProfile(payload.sub, token)
-      .then(setProfile)
-      .catch(console.error)
+    Promise.all([
+      getStudentProfile(payload.sub, token),
+      getTerms(payload.school_id, token),
+    ]).then(([prof, fetchedTerms]) => {
+      setProfile(prof)
+      setTerms(fetchedTerms)
+      if (fetchedTerms.length > 0) setSelectedTermId(fetchedTerms[0].id)
+    }).catch(console.error)
+  }, [])
+
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (termRef.current && !termRef.current.contains(e.target as Node)) {
+        setIsTermOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [])
 
   const classroom = profile?.classroom ?? ''
+  const selectedTerm = terms.find(t => t.id === selectedTermId)
 
   return (
     <div className="flex h-screen bg-[#f4f6fb] overflow-hidden">
@@ -115,15 +140,40 @@ export function StudentLayout() {
               {firstName ? `Merhaba, ${firstName}` : '...'}
             </h1>
             <p className="text-sm text-muted-foreground mt-0.5">
-              2024-2025 Güz Dönemi{classroom ? ` · ${classroom}` : ''}
+              {selectedTerm ? `${selectedTerm.year} ${selectedTerm.name}` : '...'}
+              {classroom ? ` · ${classroom}` : ''}
             </p>
           </div>
 
           <div className="flex items-center gap-3">
-            <button className="flex items-center gap-1.5 rounded-lg border border-border bg-white px-3 py-1.5 text-sm font-medium text-foreground hover:bg-muted transition-colors">
-              Güz Dönemi
-              <ChevronDown className="h-3.5 w-3.5 text-muted-foreground" />
-            </button>
+
+            {/* Term Dropdown */}
+            <div className="relative" ref={termRef}>
+              <button
+                onClick={() => setIsTermOpen(v => !v)}
+                className="flex items-center gap-1.5 rounded-lg border border-border bg-white px-3 py-1.5 text-sm font-medium text-foreground hover:bg-muted transition-colors"
+              >
+                {selectedTerm ? selectedTerm.name : '...'}
+                <ChevronDown className="h-3.5 w-3.5 text-muted-foreground" />
+              </button>
+
+              {isTermOpen && terms.length > 0 && (
+                <div className="absolute right-0 top-full mt-1 w-52 rounded-lg border border-border bg-white shadow-lg z-50 overflow-hidden">
+                  {terms.map(term => (
+                    <button
+                      key={term.id}
+                      onClick={() => { setSelectedTermId(term.id); setIsTermOpen(false) }}
+                      className={`w-full flex items-center justify-between px-4 py-2.5 text-sm text-left hover:bg-muted transition-colors ${
+                        term.id === selectedTermId ? 'text-primary font-semibold' : 'text-foreground'
+                      }`}
+                    >
+                      <span>{term.name}</span>
+                      <span className="text-xs text-muted-foreground">{term.year}</span>
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
 
             <div className="flex h-8 w-8 items-center justify-center rounded-full border border-border bg-white">
               <div className="h-2 w-2 rounded-full bg-primary" />
@@ -137,7 +187,7 @@ export function StudentLayout() {
 
         {/* Content */}
         <main className="flex-1 overflow-y-auto">
-          <Outlet />
+          <Outlet context={{ termId: selectedTermId, termEndDate: selectedTerm?.endDate ?? '' } satisfies StudentLayoutContext} />
         </main>
 
       </div>

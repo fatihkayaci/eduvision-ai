@@ -24,6 +24,7 @@ public static class DependencyInjection
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IParentRepository, ParentRepository>();
         services.AddScoped<IStudentRepository, StudentRepository>();
+        services.AddScoped<ITermRepository, TermRepository>();
         services.AddScoped<ITeacherRepository, TeacherRepository>();
         services.AddSingleton<IPasswordHasher, PasswordHasher>();
         services.AddSingleton<ITokenService, TokenService>();

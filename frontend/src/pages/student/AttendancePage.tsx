@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react'
+import { useOutletContext } from 'react-router-dom'
 import { decodeToken } from '@/lib/token'
 import { getStudentAttendances } from '@/features/student/api/studentApi'
 import type { StudentAttendances, AttendanceRecord } from '@/features/student/types'
+import type { StudentLayoutContext } from './Layout'
 
 const MONTHS = ['Oca', 'Şub', 'Mar', 'Nis', 'May', 'Haz', 'Tem', 'Ağu', 'Eyl', 'Eki', 'Kas', 'Ara']
 const DAYS = ['Pzt', 'Sal', 'Çar', 'Per', 'Cum']
@@ -68,14 +70,16 @@ function dayColor(dateStr: string, recordMap: Map<string, AttendanceRecord>): st
 }
 
 export function AttendancePage() {
+  const { termId } = useOutletContext<StudentLayoutContext>()
   const [data, setData] = useState<StudentAttendances | null>(null)
 
   useEffect(() => {
+    if (!termId) return
     const token = localStorage.getItem('accessToken')
     if (!token) return
     const { sub } = decodeToken(token)
-    getStudentAttendances(sub, token).then(setData).catch(console.error)
-  }, [])
+    getStudentAttendances(sub, termId, token).then(setData).catch(console.error)
+  }, [termId])
 
   const calendar = data && data.records.length > 0 ? buildCalendar(data.records) : null
 

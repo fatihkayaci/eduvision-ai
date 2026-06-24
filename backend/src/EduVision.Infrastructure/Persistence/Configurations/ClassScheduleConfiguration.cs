@@ -27,7 +27,12 @@ public sealed class ClassScheduleConfiguration : IEntityTypeConfiguration<ClassS
             .HasForeignKey(cs => cs.ClassroomCourseId)
             .OnDelete(DeleteBehavior.Cascade);
 
-        builder.HasIndex(cs => new { cs.ClassroomCourseId, cs.Weekday, cs.StartTime })
+        builder.HasOne<Term>()
+            .WithMany()
+            .HasForeignKey(cs => cs.TermId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasIndex(cs => new { cs.ClassroomCourseId, cs.TermId, cs.Weekday, cs.StartTime })
             .IsUnique();
     }
 }

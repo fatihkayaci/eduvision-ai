@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react'
 import { ChevronDown, ChevronUp } from 'lucide-react'
+import { useOutletContext } from 'react-router-dom'
 import { decodeToken } from '@/lib/token'
 import { getStudentCourses } from '@/features/student/api/studentApi'
 import type { StudentCourse, Grade } from '@/features/student/types'
+import type { StudentLayoutContext } from './Layout'
 
 const MONTHS = ['Oca', 'Şub', 'Mar', 'Nis', 'May', 'Haz', 'Tem', 'Ağu', 'Eyl', 'Eki', 'Kas', 'Ara']
 
@@ -47,15 +49,17 @@ function buildGradeNames(grades: Grade[]): string[] {
 }
 
 export function GradesPage() {
+  const { termId } = useOutletContext<StudentLayoutContext>()
   const [courses, setCourses] = useState<StudentCourse[]>([])
   const [expandedId, setExpandedId] = useState<string | null>(null)
 
   useEffect(() => {
+    if (!termId) return
     const token = localStorage.getItem('accessToken')
     if (!token) return
     const { sub } = decodeToken(token)
-    getStudentCourses(sub, token).then(setCourses).catch(console.error)
-  }, [])
+    getStudentCourses(sub, termId, token).then(setCourses).catch(console.error)
+  }, [termId])
 
   const averages = courses.map(c => courseAverage(c.grades))
   
