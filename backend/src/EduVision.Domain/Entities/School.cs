@@ -1,3 +1,5 @@
+using EduVision.Domain.Exceptions;
+
 namespace EduVision.Domain.Entities;
 
 public sealed class School : BaseEntity
@@ -13,8 +15,8 @@ public sealed class School : BaseEntity
 
     public static School Create(string name, string code)
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(name);
-        ArgumentException.ThrowIfNullOrWhiteSpace(code);
+        if (string.IsNullOrWhiteSpace(name)) throw new DomainValidationException("School name cannot be empty.");
+        if (string.IsNullOrWhiteSpace(code)) throw new DomainValidationException("School code cannot be empty.");
 
         return new School
         {

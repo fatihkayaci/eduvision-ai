@@ -16,10 +16,6 @@ public sealed class StudentController(ISender sender) : ControllerBase
     public async Task<ActionResult<GetStudentProfileResponse>> GetProfile(Guid studentId, CancellationToken cancellationToken)
     {
         var response = await sender.Send(new GetStudentProfileQuery(studentId), cancellationToken);
-
-        if (response is null)
-            return NotFound();
-
         return Ok(response);
     }
 

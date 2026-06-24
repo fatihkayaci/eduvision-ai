@@ -1,3 +1,5 @@
+using EduVision.Domain.Exceptions;
+
 namespace EduVision.Domain.Entities;
 
 public sealed class StudentProfile
@@ -13,12 +15,8 @@ public sealed class StudentProfile
 
     public static StudentProfile Create(Guid userId, string studentNumber)
     {
-        if (userId == Guid.Empty)
-        {
-            throw new ArgumentException("User ID cannot be empty.", nameof(userId));
-        }
-
-        ArgumentException.ThrowIfNullOrWhiteSpace(studentNumber);
+        if (userId == Guid.Empty) throw new DomainValidationException("User ID cannot be empty.");
+        if (string.IsNullOrWhiteSpace(studentNumber)) throw new DomainValidationException("Student number cannot be empty.");
 
         return new StudentProfile
         {

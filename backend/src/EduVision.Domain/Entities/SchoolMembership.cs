@@ -1,4 +1,5 @@
 using EduVision.Domain.Enums;
+using EduVision.Domain.Exceptions;
 
 namespace EduVision.Domain.Entities;
 
@@ -23,22 +24,10 @@ public sealed class SchoolMembership : BaseEntity
         string username,
         UserRole role)
     {
-        if (userId == Guid.Empty)
-        {
-            throw new ArgumentException("User ID cannot be empty.", nameof(userId));
-        }
-
-        if (schoolId == Guid.Empty)
-        {
-            throw new ArgumentException("School ID cannot be empty.", nameof(schoolId));
-        }
-
-        ArgumentException.ThrowIfNullOrWhiteSpace(username);
-
-        if (role == UserRole.None)
-        {
-            throw new ArgumentException("A school membership must have a role.", nameof(role));
-        }
+        if (userId == Guid.Empty) throw new DomainValidationException("User ID cannot be empty.");
+        if (schoolId == Guid.Empty) throw new DomainValidationException("School ID cannot be empty.");
+        if (string.IsNullOrWhiteSpace(username)) throw new DomainValidationException("Username cannot be empty.");
+        if (role == UserRole.None) throw new DomainValidationException("A school membership must have a role.");
 
         return new SchoolMembership
         {

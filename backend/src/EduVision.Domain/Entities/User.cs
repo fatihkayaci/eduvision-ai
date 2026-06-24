@@ -1,3 +1,5 @@
+using EduVision.Domain.Exceptions;
+
 namespace EduVision.Domain.Entities;
 
 public sealed class User : BaseEntity
@@ -31,12 +33,12 @@ public sealed class User : BaseEntity
         string passwordHash,
         bool isSystemAdmin = false)
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(firstName);
-        ArgumentException.ThrowIfNullOrWhiteSpace(lastName);
-        ArgumentException.ThrowIfNullOrWhiteSpace(nationalIdentityNumber);
-        ArgumentException.ThrowIfNullOrWhiteSpace(phoneNumber);
-        ArgumentException.ThrowIfNullOrWhiteSpace(email);
-        ArgumentException.ThrowIfNullOrWhiteSpace(passwordHash);
+        if (string.IsNullOrWhiteSpace(firstName)) throw new DomainValidationException("First name cannot be empty.");
+        if (string.IsNullOrWhiteSpace(lastName)) throw new DomainValidationException("Last name cannot be empty.");
+        if (string.IsNullOrWhiteSpace(nationalIdentityNumber)) throw new DomainValidationException("National identity number cannot be empty.");
+        if (string.IsNullOrWhiteSpace(phoneNumber)) throw new DomainValidationException("Phone number cannot be empty.");
+        if (string.IsNullOrWhiteSpace(email)) throw new DomainValidationException("Email cannot be empty.");
+        if (string.IsNullOrWhiteSpace(passwordHash)) throw new DomainValidationException("Password hash cannot be empty.");
 
         return new User
         {

@@ -1,4 +1,5 @@
 using EduVision.Domain.Enums;
+using EduVision.Domain.Exceptions;
 
 namespace EduVision.Domain.Entities;
 
@@ -33,16 +34,10 @@ public sealed class Assignment : BaseEntity
         string? description = null,
         string? fileUrl = null)
     {
-        if (classRoomId == Guid.Empty)
-            throw new ArgumentException("ClassRoom ID cannot be empty.", nameof(classRoomId));
-
-        ArgumentException.ThrowIfNullOrWhiteSpace(title);
-
-        if (type == default)
-            throw new ArgumentException("Assignment type must be specified.", nameof(type));
-
-        if (dueDate < startDate)
-            throw new ArgumentException("Due date cannot be before start date.", nameof(dueDate));
+        if (classRoomId == Guid.Empty) throw new DomainValidationException("ClassRoom ID cannot be empty.");
+        if (string.IsNullOrWhiteSpace(title)) throw new DomainValidationException("Assignment title cannot be empty.");
+        if (type == default) throw new DomainValidationException("Assignment type must be specified.");
+        if (dueDate < startDate) throw new DomainValidationException("Due date cannot be before start date.");
 
         return new Assignment
         {

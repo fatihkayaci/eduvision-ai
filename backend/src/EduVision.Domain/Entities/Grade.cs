@@ -1,4 +1,5 @@
 using EduVision.Domain.Enums;
+using EduVision.Domain.Exceptions;
 
 namespace EduVision.Domain.Entities;
 
@@ -20,17 +21,10 @@ public sealed class Grade : BaseEntity
 
     public static Grade Create(Guid studentId, Guid classroomCourseId, decimal value, ExamType examType, DateOnly date)
     {
-        if (studentId == Guid.Empty)
-            throw new ArgumentException("Student ID cannot be empty.", nameof(studentId));
-
-        if (classroomCourseId == Guid.Empty)
-            throw new ArgumentException("ClassroomCourse ID cannot be empty.", nameof(classroomCourseId));
-
-        if (value is < 0 or > 100)
-            throw new ArgumentOutOfRangeException(nameof(value), "Grade value must be between 0 and 100.");
-
-        if (examType == ExamType.None)
-            throw new ArgumentException("Exam type must be specified.", nameof(examType));
+        if (studentId == Guid.Empty) throw new DomainValidationException("Student ID cannot be empty.");
+        if (classroomCourseId == Guid.Empty) throw new DomainValidationException("ClassroomCourse ID cannot be empty.");
+        if (value is < 0 or > 100) throw new DomainValidationException("Grade value must be between 0 and 100.");
+        if (examType == ExamType.None) throw new DomainValidationException("Exam type must be specified.");
 
         return new Grade
         {

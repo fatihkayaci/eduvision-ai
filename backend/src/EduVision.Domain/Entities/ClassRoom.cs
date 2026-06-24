@@ -1,3 +1,5 @@
+using EduVision.Domain.Exceptions;
+
 namespace EduVision.Domain.Entities;
 
 public sealed class ClassRoom : BaseEntity
@@ -20,16 +22,10 @@ public sealed class ClassRoom : BaseEntity
         int gradeLevel,
         string section)
     {
-        if (schoolId == Guid.Empty)
-            throw new ArgumentException("School ID cannot be empty.", nameof(schoolId));
-
-        if (homeRoomTeacherId == Guid.Empty)
-            throw new ArgumentException("HomeRoom teacher ID cannot be empty.", nameof(homeRoomTeacherId));
-
-        if (gradeLevel is < 9 or > 12)
-            throw new ArgumentOutOfRangeException(nameof(gradeLevel), "Grade level must be between 9 and 12.");
-
-        ArgumentException.ThrowIfNullOrWhiteSpace(section);
+        if (schoolId == Guid.Empty) throw new DomainValidationException("School ID cannot be empty.");
+        if (homeRoomTeacherId == Guid.Empty) throw new DomainValidationException("HomeRoom teacher ID cannot be empty.");
+        if (gradeLevel is < 9 or > 12) throw new DomainValidationException("Grade level must be between 9 and 12.");
+        if (string.IsNullOrWhiteSpace(section)) throw new DomainValidationException("Section cannot be empty.");
 
         return new ClassRoom
         {
