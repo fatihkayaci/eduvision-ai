@@ -15,20 +15,12 @@ public sealed class StudentRepository(ApplicationDbContext dbContext) : IStudent
             .FirstOrDefaultAsync(sp => sp.UserId == studentId, cancellationToken);
     }
 
-    public async Task<List<ClassSchedule>> GetScheduleAsync(Guid studentId, CancellationToken cancellationToken = default)
+    public Task<List<ClassSchedule>> GetScheduleAsync(Guid studentId, CancellationToken cancellationToken = default)
     {
-        var classroomId = await dbContext.ClassEnrollments
+        return dbContext.ClassSchedules
             .AsNoTracking()
-            .Where(e => e.StudentId == studentId)
-            .Select(e => e.ClassRoomId)
-            .FirstOrDefaultAsync(cancellationToken);
-
-        if (classroomId == Guid.Empty)
-            return [];
-
-        return await dbContext.ClassSchedules
-            .AsNoTracking()
-            .Where(cs => cs.ClassroomCourse.ClassRoomId == classroomId)
+            .Where(cs => dbContext.ClassEnrollments
+                .Any(e => e.StudentId == studentId && e.ClassRoomId == cs.ClassroomCourse.ClassRoomId))
             .Include(cs => cs.ClassroomCourse)
                 .ThenInclude(cc => cc.Course)
             .OrderBy(cs => cs.Weekday)
@@ -36,20 +28,12 @@ public sealed class StudentRepository(ApplicationDbContext dbContext) : IStudent
             .ToListAsync(cancellationToken);
     }
 
-    public async Task<List<Assignment>> GetAssignmentsAsync(Guid studentId, CancellationToken cancellationToken = default)
+    public Task<List<Assignment>> GetAssignmentsAsync(Guid studentId, CancellationToken cancellationToken = default)
     {
-        var classroomId = await dbContext.ClassEnrollments
+        return dbContext.Assignments
             .AsNoTracking()
-            .Where(e => e.StudentId == studentId)
-            .Select(e => e.ClassRoomId)
-            .FirstOrDefaultAsync(cancellationToken);
-
-        if (classroomId == Guid.Empty)
-            return [];
-
-        return await dbContext.Assignments
-            .AsNoTracking()
-            .Where(a => a.ClassRoomId == classroomId)
+            .Where(a => dbContext.ClassEnrollments
+                .Any(e => e.StudentId == studentId && e.ClassRoomId == a.ClassRoomId))
             .OrderBy(a => a.DueDate)
             .ToListAsync(cancellationToken);
     }
@@ -63,20 +47,12 @@ public sealed class StudentRepository(ApplicationDbContext dbContext) : IStudent
             .ToListAsync(cancellationToken);
     }
 
-    public async Task<List<ClassroomCourse>> GetCoursesWithGradesAsync(Guid studentId, CancellationToken cancellationToken = default)
+    public Task<List<ClassroomCourse>> GetCoursesWithGradesAsync(Guid studentId, CancellationToken cancellationToken = default)
     {
-        var classroomId = await dbContext.ClassEnrollments
+        return dbContext.ClassroomCourses
             .AsNoTracking()
-            .Where(e => e.StudentId == studentId)
-            .Select(e => e.ClassRoomId)
-            .FirstOrDefaultAsync(cancellationToken);
-
-        if (classroomId == Guid.Empty)
-            return [];
-
-        return await dbContext.ClassroomCourses
-            .AsNoTracking()
-            .Where(cc => cc.ClassRoomId == classroomId)
+            .Where(cc => dbContext.ClassEnrollments
+                .Any(e => e.StudentId == studentId && e.ClassRoomId == cc.ClassRoomId))
             .Include(cc => cc.Course)
             .Include(cc => cc.Grades.Where(g => g.StudentId == studentId))
             .ToListAsync(cancellationToken);
