@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react'
+import { useOutletContext } from 'react-router-dom'
 import { decodeToken } from '@/lib/token'
 import { getStudentSchedule } from '@/features/student/api/studentApi'
 import type { ScheduleEntry } from '@/features/student/types'
+import type { StudentLayoutContext } from './Layout'
 
 const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']
 const DAY_LABELS: Record<string, string> = {
@@ -23,18 +25,22 @@ function toMinutes(t: string): number {
 }
 
 export function SchedulePage() {
+  const { termId, termEndDate } = useOutletContext<StudentLayoutContext>()
   const [schedule, setSchedule] = useState<ScheduleEntry[]>([])
 
   useEffect(() => {
+    if (!termId) return
     const token = localStorage.getItem('accessToken')
     if (!token) return
     const { sub } = decodeToken(token)
-    getStudentSchedule(sub, token).then(setSchedule).catch(console.error)
-  }, [])
+    getStudentSchedule(sub, termId, token).then(setSchedule).catch(console.error)
+  }, [termId])
 
   const now = new Date()
+  const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`
+  const isTermOver = termEndDate !== '' && termEndDate < todayStr
   const jsDay = now.getDay()
-  const todayWeekday = jsDay >= 1 && jsDay <= 5 ? DAYS[jsDay - 1] : null
+  const todayWeekday = !isTermOver && jsDay >= 1 && jsDay <= 5 ? DAYS[jsDay - 1] : null
   const currentMinutes = now.getHours() * 60 + now.getMinutes()
 
   const courseNames = [...new Set(schedule.map(e => e.courseName))]
@@ -55,10 +61,18 @@ export function SchedulePage() {
 
   const minutesUntilNext = nextClass ? toMinutes(nextClass.startTime) - currentMinutes : null
 
+  function formatTimeUntil(mins: number): string {
+    if (mins < 5) return 'Az kaldı!'
+    if (mins < 60) return `${mins} dk sonra`
+    const h = Math.floor(mins / 60)
+    const m = mins % 60
+    return m === 0 ? `${h} saat sonra` : `${h} sa ${m} dk sonra`
+  }
+
   return (
     <div className="p-8 space-y-5">
 
-      {nextClass && (
+      {nextClass && !isTermOver && (
         <div className="rounded-2xl bg-primary px-8 py-5 flex items-center justify-between text-white">
           <div className="flex items-center gap-10">
             <div>
@@ -70,7 +84,7 @@ export function SchedulePage() {
             <p className="text-xl font-semibold">{nextClass.startTime.slice(0, 5)}</p>
           </div>
           <div className="rounded-xl bg-white/20 px-4 py-2 text-sm font-semibold">
-            {minutesUntilNext} dk sonra
+            {minutesUntilNext !== null ? formatTimeUntil(minutesUntilNext) : ''}
           </div>
         </div>
       )}

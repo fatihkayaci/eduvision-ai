@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react'
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
+import { useOutletContext } from 'react-router-dom'
 import { decodeToken } from '@/lib/token'
 import { getStudentCourses, getStudentAttendances, getStudentAssignments } from '@/features/student/api/studentApi'
 import type { StudentCourse, StudentAttendances, Assignment, AttendanceRecord } from '@/features/student/types'
+import type { StudentLayoutContext } from './Layout'
 
 const MONTHS = ['Oca', 'Şub', 'Mar', 'Nis', 'May', 'Haz', 'Tem', 'Ağu', 'Eyl', 'Eki', 'Kas', 'Ara']
 const DAYS = ['Pzt', 'Sal', 'Çar', 'Per', 'Cum']
@@ -155,24 +157,26 @@ function StatCard({
 }
 
 export function StudentDashboardPage() {
+  const { termId } = useOutletContext<StudentLayoutContext>()
   const [courses, setCourses] = useState<StudentCourse[]>([])
   const [attendance, setAttendance] = useState<StudentAttendances | null>(null)
   const [assignments, setAssignments] = useState<Assignment[]>([])
 
   useEffect(() => {
+    if (!termId) return
     const token = localStorage.getItem('accessToken')
     if (!token) return
     const { sub } = decodeToken(token)
     Promise.all([
-      getStudentCourses(sub, token),
-      getStudentAttendances(sub, token),
-      getStudentAssignments(sub, token),
+      getStudentCourses(sub, termId, token),
+      getStudentAttendances(sub, termId, token),
+      getStudentAssignments(sub, termId, token),
     ]).then(([c, a, as]) => {
       setCourses(c)
       setAttendance(a)
       setAssignments(as)
     }).catch(console.error)
-  }, [])
+  }, [termId])
 
   const today = new Date()
   today.setHours(0, 0, 0, 0)

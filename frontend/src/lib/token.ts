@@ -3,6 +3,7 @@ interface TokenPayload {
   given_name: string
   family_name: string
   role: string
+  school_id: string
 }
 
 export function decodeToken(token: string): TokenPayload {
