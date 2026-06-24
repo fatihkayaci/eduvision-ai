@@ -8,7 +8,7 @@ public sealed class GetStudentAssignmentsQueryHandler(IStudentRepository student
 {
     public async Task<List<GetStudentAssignmentsResponse>> Handle(GetStudentAssignmentsQuery request, CancellationToken cancellationToken)
     {
-        var assignments = await studentRepository.GetAssignmentsAsync(request.StudentId, cancellationToken);
+        var assignments = await studentRepository.GetAssignmentsAsync(request.StudentId, request.TermId, cancellationToken);
 
         return assignments
             .Select(a => new GetStudentAssignmentsResponse(

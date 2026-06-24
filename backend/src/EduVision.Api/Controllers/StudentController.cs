@@ -20,30 +20,42 @@ public sealed class StudentController(ISender sender) : ControllerBase
     }
 
     [HttpGet("{studentId:guid}/courses")]
-    public async Task<ActionResult<List<GetStudentCoursesResponse>>> GetCourses(Guid studentId, CancellationToken cancellationToken)
+    public async Task<ActionResult<List<GetStudentCoursesResponse>>> GetCourses(
+        Guid studentId,
+        [FromQuery] Guid termId,
+        CancellationToken cancellationToken)
     {
-        var response = await sender.Send(new GetStudentCoursesQuery(studentId), cancellationToken);
+        var response = await sender.Send(new GetStudentCoursesQuery(studentId, termId), cancellationToken);
         return Ok(response);
     }
 
     [HttpGet("{studentId:guid}/schedule")]
-    public async Task<ActionResult<List<GetStudentScheduleResponse>>> GetSchedule(Guid studentId, CancellationToken cancellationToken)
+    public async Task<ActionResult<List<GetStudentScheduleResponse>>> GetSchedule(
+        Guid studentId,
+        [FromQuery] Guid termId,
+        CancellationToken cancellationToken)
     {
-        var response = await sender.Send(new GetStudentScheduleQuery(studentId), cancellationToken);
+        var response = await sender.Send(new GetStudentScheduleQuery(studentId, termId), cancellationToken);
         return Ok(response);
     }
 
     [HttpGet("{studentId:guid}/assignments")]
-    public async Task<ActionResult<List<GetStudentAssignmentsResponse>>> GetAssignments(Guid studentId, CancellationToken cancellationToken)
+    public async Task<ActionResult<List<GetStudentAssignmentsResponse>>> GetAssignments(
+        Guid studentId,
+        [FromQuery] Guid termId,
+        CancellationToken cancellationToken)
     {
-        var response = await sender.Send(new GetStudentAssignmentsQuery(studentId), cancellationToken);
+        var response = await sender.Send(new GetStudentAssignmentsQuery(studentId, termId), cancellationToken);
         return Ok(response);
     }
 
     [HttpGet("{studentId:guid}/attendances")]
-    public async Task<ActionResult<GetStudentAttendancesResponse>> GetAttendances(Guid studentId, CancellationToken cancellationToken)
+    public async Task<ActionResult<GetStudentAttendancesResponse>> GetAttendances(
+        Guid studentId,
+        [FromQuery] Guid termId,
+        CancellationToken cancellationToken)
     {
-        var response = await sender.Send(new GetStudentAttendancesQuery(studentId), cancellationToken);
+        var response = await sender.Send(new GetStudentAttendancesQuery(studentId, termId), cancellationToken);
         return Ok(response);
     }
 }
