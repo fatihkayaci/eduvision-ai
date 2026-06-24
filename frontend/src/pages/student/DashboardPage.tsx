@@ -2,8 +2,8 @@ import { useState, useEffect } from 'react'
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
 import { useOutletContext } from 'react-router-dom'
 import { decodeToken } from '@/lib/token'
-import { getStudentCourses, getStudentAttendances, getStudentAssignments } from '@/features/student/api/studentApi'
-import type { StudentCourse, StudentAttendances, Assignment, AttendanceRecord } from '@/features/student/types'
+import { getStudentCourses, getStudentAttendances, getStudentAssignments, getStudentRank } from '@/features/student/api/studentApi'
+import type { StudentCourse, StudentAttendances, Assignment, AttendanceRecord, StudentRank } from '@/features/student/types'
 import type { StudentLayoutContext } from './Layout'
 
 const MONTHS = ['Oca', 'Şub', 'Mar', 'Nis', 'May', 'Haz', 'Tem', 'Ağu', 'Eyl', 'Eki', 'Kas', 'Ara']
@@ -161,6 +161,7 @@ export function StudentDashboardPage() {
   const [courses, setCourses] = useState<StudentCourse[]>([])
   const [attendance, setAttendance] = useState<StudentAttendances | null>(null)
   const [assignments, setAssignments] = useState<Assignment[]>([])
+  const [rank, setRank] = useState<StudentRank | null>(null)
 
   useEffect(() => {
     if (!termId) return
@@ -171,10 +172,12 @@ export function StudentDashboardPage() {
       getStudentCourses(sub, termId, token),
       getStudentAttendances(sub, termId, token),
       getStudentAssignments(sub, termId, token),
-    ]).then(([c, a, as]) => {
+      getStudentRank(sub, termId, token),
+    ]).then(([c, a, as, r]) => {
       setCourses(c)
       setAttendance(a)
       setAssignments(as)
+      setRank(r)
     }).catch(console.error)
   }, [termId])
 
@@ -206,7 +209,8 @@ export function StudentDashboardPage() {
         />
         <StatCard
           label="Sınıf Sıralaması"
-          value="—"
+          value={rank ? `${rank.rank}.` : '—'}
+          unit={rank ? `/ ${rank.totalStudents} öğrenci` : undefined}
         />
         <StatCard
           label="Devamsızlık"

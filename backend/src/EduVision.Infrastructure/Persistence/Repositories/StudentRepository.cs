@@ -45,6 +45,32 @@ public sealed class StudentRepository(ApplicationDbContext dbContext) : IStudent
             .ToListAsync(cancellationToken);
     }
 
+    public async Task<(int Rank, int TotalStudents)?> GetClassRankAsync(Guid studentId, Guid termId, CancellationToken cancellationToken = default)
+    {
+        var classRoomId = await dbContext.ClassEnrollments
+            .Where(e => e.StudentId == studentId)
+            .Select(e => (Guid?)e.ClassRoomId)
+            .FirstOrDefaultAsync(cancellationToken);
+
+        if (classRoomId is null) return null;
+
+        var totalStudents = await dbContext.ClassEnrollments
+            .CountAsync(e => e.ClassRoomId == classRoomId, cancellationToken);
+
+        var studentAverages = await dbContext.Grades
+            .Where(g => g.TermId == termId && dbContext.ClassEnrollments
+                .Any(e => e.StudentId == g.StudentId && e.ClassRoomId == classRoomId))
+            .GroupBy(g => g.StudentId)
+            .Select(g => new { StudentId = g.Key, Average = g.Average(x => x.Value) })
+            .OrderByDescending(x => x.Average)
+            .ToListAsync(cancellationToken);
+
+        var index = studentAverages.FindIndex(x => x.StudentId == studentId);
+        if (index < 0) return null;
+
+        return (index + 1, totalStudents);
+    }
+
     public Task<List<ClassSchedule>> GetScheduleAsync(Guid studentId, Guid termId, CancellationToken cancellationToken = default)
     {
         return dbContext.ClassSchedules

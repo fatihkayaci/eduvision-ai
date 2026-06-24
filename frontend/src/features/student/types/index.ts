@@ -1,3 +1,8 @@
+export interface StudentRank {
+  rank: number
+  totalStudents: number
+}
+
 export interface Term {
   id: string
   name: string

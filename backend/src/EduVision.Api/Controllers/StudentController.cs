@@ -1,4 +1,5 @@
 using EduVision.Application.Features.Student.Queries.GetStudentAssignments;
+using EduVision.Application.Features.Student.Queries.GetStudentRank;
 using EduVision.Application.Features.Student.Queries.GetStudentSchedule;
 using EduVision.Application.Features.Student.Queries.GetStudentAttendances;
 using EduVision.Application.Features.Student.Queries.GetStudentCourses;
@@ -46,6 +47,17 @@ public sealed class StudentController(ISender sender) : ControllerBase
         CancellationToken cancellationToken)
     {
         var response = await sender.Send(new GetStudentAssignmentsQuery(studentId, termId), cancellationToken);
+        return Ok(response);
+    }
+
+    [HttpGet("{studentId:guid}/rank")]
+    public async Task<ActionResult<GetStudentRankResponse>> GetRank(
+        Guid studentId,
+        [FromQuery] Guid termId,
+        CancellationToken cancellationToken)
+    {
+        var response = await sender.Send(new GetStudentRankQuery(studentId, termId), cancellationToken);
+        if (response is null) return NoContent();
         return Ok(response);
     }
 
