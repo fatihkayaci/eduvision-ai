@@ -8,14 +8,6 @@ public sealed class GetCoursesQueryHandler(ITeacherRepository teacherRepository)
 {
     public async Task<List<GetCoursesResponse>> Handle(GetCoursesQuery request, CancellationToken cancellationToken)
     {
-        var courses = await teacherRepository.GetCoursesAsync(request.TeacherId, cancellationToken);
-
-        return courses
-            .Select(cc => new GetCoursesResponse(
-                cc.Id,
-                cc.Course.Name,
-                cc.ClassRoom.GradeLevel,
-                cc.ClassRoom.Section))
-            .ToList();
+        return await teacherRepository.GetCoursesAsync(request.TeacherId, cancellationToken);
     }
 }

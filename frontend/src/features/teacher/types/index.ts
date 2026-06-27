@@ -3,6 +3,8 @@ export interface TeacherCourse {
   courseName: string
   gradeLevel: number
   section: string
+  studentCount: number
+  average: number | null
 }
 
 export interface ClassStudent {

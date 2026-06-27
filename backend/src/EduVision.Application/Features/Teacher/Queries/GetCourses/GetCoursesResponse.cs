@@ -4,4 +4,6 @@ public sealed record GetCoursesResponse(
     Guid ClassroomCourseId,
     string CourseName,
     int GradeLevel,
-    string Section);
+    string Section,
+    int StudentCount,
+    decimal? Average);

@@ -69,6 +69,10 @@ export function ClassesPage() {
               <p className={['text-sm font-medium', isSelected ? 'text-white/80' : 'text-muted-foreground'].join(' ')}>
                 {course.courseName}
               </p>
+              <div className={['mt-3 flex items-center justify-between text-xs', isSelected ? 'text-white/70' : 'text-muted-foreground'].join(' ')}>
+                <span>{course.studentCount} öğrenci</span>
+                <span>{course.average != null ? `Ort. ${course.average.toFixed(1)}` : '—'}</span>
+              </div>
             </button>
           )
         })}
