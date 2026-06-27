@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import { NavLink, Outlet } from 'react-router-dom'
 import { LayoutDashboard, FileText, UserX, BookOpen, Calendar, Sparkles, ChevronDown } from 'lucide-react'
 import { decodeToken, initials } from '@/lib/token'
+import { GraduationCap } from 'lucide-react'
 import { getStudentProfile, getTerms } from '@/features/student/api/studentApi'
 import type { StudentProfile, Term } from '@/features/student/types'
 
@@ -65,12 +66,12 @@ export function StudentLayout() {
       <aside className="w-56 shrink-0 flex flex-col bg-white border-r border-border">
 
         {/* Logo */}
-        <div className="flex items-center gap-2.5 px-5 py-5 border-b border-border">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-white text-sm font-bold">
-            O
+        <div className="relative flex items-center gap-3">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white text-primary">
+            <GraduationCap className="h-5 w-5" />
           </div>
-          <span className="font-semibold text-sm text-foreground" style={{ fontFamily: 'Sora, sans-serif' }}>
-            Okul Takip
+          <span className="text-lg font-semibold text-black" style={{ fontFamily: 'Sora, sans-serif' }}>
+            EduVision AI
           </span>
         </div>
 

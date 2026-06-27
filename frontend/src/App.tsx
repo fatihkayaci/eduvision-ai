@@ -3,6 +3,7 @@ import { LoginPage } from '@/pages/LoginPage'
 import { PrincipalDashboardPage } from '@/pages/principal/DashboardPage'
 import { TeacherDashboardPage } from '@/pages/teacher/DashboardPage'
 import { TeacherLayout } from '@/pages/teacher/Layout'
+import { ClassesPage } from '@/pages/teacher/ClassesPage'
 import { StudentDashboardPage } from '@/pages/student/DashboardPage'
 import { GradesPage } from '@/pages/student/GradesPage'
 import { AttendancePage } from '@/pages/student/AttendancePage'
@@ -20,6 +21,7 @@ function App() {
         <Route path="/principal/dashboard" element={<PrincipalDashboardPage />} />
         <Route path="/teacher" element={<TeacherLayout />}>
           <Route path="dashboard" element={<TeacherDashboardPage />} />
+          <Route path="classes" element={<ClassesPage />} />
         </Route>
         <Route path="/student" element={<StudentLayout />}>
           <Route path="dashboard" element={<StudentDashboardPage />} />
