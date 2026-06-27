@@ -1,6 +1,7 @@
 using EduVision.Application.Comman.Interfaces;
+using EduVision.Application.Features.Teacher.Queries.GetClassStudents;
 using EduVision.Application.Features.Teacher.Queries.GetCourses;
-using EduVision.Domain.Entities;
+using EduVision.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 
 namespace EduVision.Infrastructure.Persistence.Repositories;
@@ -26,7 +27,7 @@ public sealed class TeacherRepository(ApplicationDbContext dbContext) : ITeacher
             .ToListAsync(cancellationToken);
     }
 
-    public async Task<List<StudentProfile>> GetClassStudentsAsync(Guid classroomCourseId, CancellationToken cancellationToken = default)
+    public async Task<List<GetClassStudentsResponse>> GetClassStudentsAsync(Guid classroomCourseId, CancellationToken cancellationToken = default)
     {
         var classRoomId = await dbContext.ClassroomCourses
             .Where(cc => cc.Id == classroomCourseId)
@@ -37,10 +38,21 @@ public sealed class TeacherRepository(ApplicationDbContext dbContext) : ITeacher
 
         return await dbContext.StudentProfiles
             .AsNoTracking()
-            .Include(sp => sp.User)
             .Where(sp => dbContext.ClassEnrollments
                 .Any(ce => ce.StudentId == sp.UserId && ce.ClassRoomId == classRoomId))
             .OrderBy(sp => sp.StudentNumber)
+            .Select(sp => new GetClassStudentsResponse(
+                sp.UserId,
+                sp.User.FirstName,
+                sp.User.LastName,
+                sp.StudentNumber,
+                dbContext.Grades
+                    .Where(g => g.ClassroomCourseId == classroomCourseId && g.StudentId == sp.UserId)
+                    .Average(g => (decimal?)g.Value),
+                dbContext.Attendances
+                    .Count(a => a.StudentId == sp.UserId && a.Type == AttendanceType.Absent),
+                dbContext.Attendances
+                    .Count(a => a.StudentId == sp.UserId && a.Type == AttendanceType.Excused)))
             .ToListAsync(cancellationToken);
     }
 }

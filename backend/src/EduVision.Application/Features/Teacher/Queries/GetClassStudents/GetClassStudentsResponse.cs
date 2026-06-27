@@ -4,4 +4,7 @@ public sealed record GetClassStudentsResponse(
     Guid StudentId,
     string FirstName,
     string LastName,
-    string StudentNumber);
+    string StudentNumber,
+    decimal? Average,
+    int TotalAbsent,
+    int TotalExcused);
