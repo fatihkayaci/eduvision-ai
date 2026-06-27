@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { ChevronRight } from 'lucide-react'
 import { decodeToken, initials } from '@/lib/token'
 import { getCourses, getClassStudents } from '@/features/teacher/api/teacherApi'
 import type { TeacherCourse, ClassStudent } from '@/features/teacher/types'
@@ -96,11 +97,21 @@ export function ClassesPage() {
                 <th className="px-6 py-3 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">
                   Öğrenci
                 </th>
+                <th className="px-6 py-3 text-right text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                  Ortalama
+                </th>
+                <th className="px-6 py-3 text-right text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                  Devamsız
+                </th>
+                <th className="px-6 py-3 text-right text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                  Durum
+                </th>
+                <th className="w-10" />
               </tr>
             </thead>
             <tbody>
               {students.map((student, index) => (
-                <tr key={student.studentId} className="border-b border-border last:border-0 hover:bg-muted/40 transition-colors">
+                <tr key={student.studentId} className="border-b border-border last:border-0 hover:bg-muted/60 transition-colors cursor-pointer">
                   <td className="px-6 py-4 text-sm text-muted-foreground">
                     {String(index + 1).padStart(2, '0')}
                   </td>
@@ -109,10 +120,35 @@ export function ClassesPage() {
                       <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary text-xs font-bold">
                         {initials(student.firstName, student.lastName)}
                       </div>
-                      <span className="text-sm font-medium text-foreground">
-                        {student.firstName} {student.lastName}
-                      </span>
+                      <div>
+                        <span className="text-sm font-medium text-foreground">
+                          {student.firstName} {student.lastName}
+                        </span>
+                        <p className="text-xs text-muted-foreground">{student.studentNumber}</p>
+                      </div>
                     </div>
+                  </td>
+                  <td className="px-6 py-4 text-right text-sm font-semibold text-foreground">
+                    {student.average != null ? student.average.toFixed(1) : '—'}
+                  </td>
+                  <td className="px-6 py-4 text-right text-sm">
+                    <span className={student.totalAbsent > 0 ? 'font-medium text-red-500' : 'text-muted-foreground'}>
+                      {student.totalAbsent}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4 text-right text-sm">
+                    {student.totalAbsent >= 10 ? (
+                      <span className="inline-flex items-center rounded-full bg-red-100 px-2 py-0.5 text-xs font-medium text-red-700">Kritik</span>
+                    ) : student.totalAbsent >= 5 ? (
+                      <span className="inline-flex items-center rounded-full bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-700">Riskli</span>
+                    ) : student.totalAbsent > 0 || student.totalExcused > 0 ? (
+                      <span className="inline-flex items-center rounded-full bg-blue-100 px-2 py-0.5 text-xs font-medium text-blue-700">Takipte</span>
+                    ) : (
+                      <span className="inline-flex items-center rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-700">Normal</span>
+                    )}
+                  </td>
+                  <td className="pr-4">
+                    <ChevronRight className="h-4 w-4 text-muted-foreground ml-auto" />
                   </td>
                 </tr>
               ))}

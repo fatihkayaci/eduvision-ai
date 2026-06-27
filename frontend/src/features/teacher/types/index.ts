@@ -12,4 +12,7 @@ export interface ClassStudent {
   firstName: string
   lastName: string
   studentNumber: string
+  average: number | null
+  totalAbsent: number
+  totalExcused: number
 }
