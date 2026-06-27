@@ -1,5 +1,6 @@
 using EduVision.Application.Comman.Interfaces;
 using EduVision.Application.Features.Teacher.Queries.GetClassStudents;
+using EduVision.Application.Features.Teacher.Queries.GetCourseAssignments;
 using EduVision.Application.Features.Teacher.Queries.GetCourses;
 using EduVision.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
@@ -53,6 +54,27 @@ public sealed class TeacherRepository(ApplicationDbContext dbContext) : ITeacher
                     .Count(a => a.StudentId == sp.UserId && a.Type == AttendanceType.Absent),
                 dbContext.Attendances
                     .Count(a => a.StudentId == sp.UserId && a.Type == AttendanceType.Excused)))
+            .ToListAsync(cancellationToken);
+    }
+
+    public async Task<List<GetCourseAssignmentsResponse>> GetCourseAssignmentsAsync(Guid classroomCourseId, Guid termId, CancellationToken cancellationToken = default)
+    {
+        var classRoomId = await dbContext.ClassroomCourses
+            .Where(cc => cc.Id == classroomCourseId)
+            .Select(cc => (Guid?)cc.ClassRoomId)
+            .FirstOrDefaultAsync(cancellationToken);
+
+        if (classRoomId is null) return [];
+
+        return await dbContext.Assignments
+            .AsNoTracking()
+            .Where(a => a.ClassRoomId == classRoomId && a.TermId == termId)
+            .OrderBy(a => a.DueDate)
+            .Select(a => new GetCourseAssignmentsResponse(
+                a.Id,
+                a.Title,
+                a.Type.ToString(),
+                a.DueDate))
             .ToListAsync(cancellationToken);
     }
 }
