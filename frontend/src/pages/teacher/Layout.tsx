@@ -1,9 +1,15 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { NavLink, Outlet } from 'react-router-dom'
 import { LayoutDashboard, Users, ClipboardList, UserX, BookOpen, Sparkles, ChevronDown, Plus } from 'lucide-react'
 import { decodeToken, initials } from '@/lib/token'
 import { getCourses } from '@/features/teacher/api/teacherApi'
 import type { TeacherCourse } from '@/features/teacher/types'
+
+export type TeacherOutletContext = {
+  activeCourse: TeacherCourse | null
+  courses: TeacherCourse[]
+  setActiveCourse: (course: TeacherCourse) => void
+}
 
 const navItems = [
   { to: '/teacher/dashboard',  icon: LayoutDashboard, label: 'Genel Bakış' },
@@ -49,6 +55,11 @@ export function TeacherLayout() {
   const activeLabel = activeCourse
     ? `${activeCourse.gradeLevel}-${activeCourse.section} · ${activeCourse.courseName}`
     : '...'
+
+  const outletContext = useMemo(
+    () => ({ activeCourse, courses, setActiveCourse }),
+    [activeCourse, courses],
+  )
 
   return (
     <div className="flex h-screen bg-[#f4f6fb] overflow-hidden">
@@ -182,7 +193,7 @@ export function TeacherLayout() {
 
         {/* Content */}
         <main className="flex-1 overflow-y-auto">
-          <Outlet />
+          <Outlet context={outletContext} />
         </main>
 
       </div>
