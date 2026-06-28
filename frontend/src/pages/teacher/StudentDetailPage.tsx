@@ -4,20 +4,7 @@ import {
 } from 'recharts'
 import { ArrowLeft, TrendingDown, TrendingUp } from 'lucide-react'
 import { initials } from '@/lib/token'
-import type { TeacherCourse, ClassStudent } from '@/features/teacher/types'
-
-interface LocationState {
-  student: ClassStudent
-  course: TeacherCourse
-  allStudents: ClassStudent[]
-}
-
-interface GradePoint {
-  name: string
-  score: number
-  date: string
-  type: string
-}
+import type { GradePoint, StudentDetailState } from '@/features/teacher/types'
 
 function buildGradeHistory(avg: number): GradePoint[] {
   const meta = [
@@ -94,7 +81,7 @@ const TOTAL_CLASSES = 55
 export function StudentDetailPage() {
   const navigate = useNavigate()
   const location = useLocation()
-  const state = location.state as LocationState | null
+  const state = location.state as StudentDetailState | null
 
   if (!state) {
     navigate('/teacher/classes', { replace: true })

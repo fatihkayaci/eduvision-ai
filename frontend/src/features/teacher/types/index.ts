@@ -31,3 +31,16 @@ export interface ClassStudent {
   totalAbsent: number
   totalExcused: number
 }
+
+export interface GradePoint {
+  name: string
+  score: number
+  date: string
+  type: string
+}
+
+export interface StudentDetailState {
+  student: ClassStudent
+  course: TeacherCourse
+  allStudents: ClassStudent[]
+}
