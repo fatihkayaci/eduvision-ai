@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { ChevronRight } from 'lucide-react'
 import { decodeToken, initials } from '@/lib/token'
 import { getCourses, getClassStudents } from '@/features/teacher/api/teacherApi'
 import type { TeacherCourse, ClassStudent } from '@/features/teacher/types'
 
 export function ClassesPage() {
+  const navigate = useNavigate()
   const [teacherId, setTeacherId] = useState('')
   const [token, setToken] = useState('')
   const [courses, setCourses] = useState<TeacherCourse[]>([])
@@ -111,7 +113,15 @@ export function ClassesPage() {
             </thead>
             <tbody>
               {students.map((student, index) => (
-                <tr key={student.studentId} className="border-b border-border last:border-0 hover:bg-muted/60 transition-colors cursor-pointer">
+                <tr
+                  key={student.studentId}
+                  className="border-b border-border last:border-0 hover:bg-muted/60 transition-colors cursor-pointer"
+                  onClick={() =>
+                    navigate(`/teacher/student/${student.studentId}`, {
+                      state: { student, course: selectedCourse, allStudents: students },
+                    })
+                  }
+                >
                   <td className="px-6 py-4 text-sm text-muted-foreground">
                     {String(index + 1).padStart(2, '0')}
                   </td>
