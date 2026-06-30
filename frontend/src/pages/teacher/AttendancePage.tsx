@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { CheckCircle2, Save, Send } from 'lucide-react'
 import { decodeToken, initials } from '@/lib/token'
 import { getCourses, getClassStudents } from '@/features/teacher/api/teacherApi'
 import type { TeacherCourse, ClassStudent } from '@/features/teacher/types'
@@ -21,6 +22,49 @@ const STATUS_COLORS: Record<AttendanceStatus, string> = {
 
 const STATUS_INACTIVE = 'bg-muted text-muted-foreground hover:bg-muted/80'
 
+function AttendanceActions({
+  saved,
+  sent,
+  onSave,
+  onSend,
+}: {
+  saved: boolean
+  sent: boolean
+  onSave: () => void
+  onSend: () => void
+}) {
+  return (
+    <div className="flex items-center gap-3">
+      {saved && (
+        <span className="flex items-center gap-1 text-xs font-medium text-green-600">
+          <CheckCircle2 className="h-3.5 w-3.5" />
+          Kaydedildi
+        </span>
+      )}
+      {sent && (
+        <span className="flex items-center gap-1 text-xs font-medium text-green-600">
+          <CheckCircle2 className="h-3.5 w-3.5" />
+          Gönderildi
+        </span>
+      )}
+      <button
+        onClick={onSave}
+        className="flex items-center gap-1.5 rounded-xl border border-border bg-white px-4 py-2 text-sm font-semibold text-foreground hover:bg-muted transition-colors"
+      >
+        <Save className="h-3.5 w-3.5" />
+        Yoklamayı kaydet
+      </button>
+      <button
+        onClick={onSend}
+        className="flex items-center gap-1.5 rounded-xl bg-primary px-4 py-2 text-sm font-semibold text-white hover:bg-primary/90 transition-colors"
+      >
+        <Send className="h-3.5 w-3.5" />
+        Yoklamayı gönder
+      </button>
+    </div>
+  )
+}
+
 export function AttendancePage() {
   const [teacherId, setTeacherId] = useState('')
   const [token, setToken] = useState('')
@@ -28,6 +72,8 @@ export function AttendancePage() {
   const [selectedCourse, setSelectedCourse] = useState<TeacherCourse | null>(null)
   const [students, setStudents] = useState<ClassStudent[]>([])
   const [statuses, setStatuses] = useState<Record<string, AttendanceStatus>>({})
+  const [saved, setSaved] = useState(false)
+  const [sent, setSent] = useState(false)
 
   useEffect(() => {
     const t = localStorage.getItem('accessToken')
@@ -45,11 +91,15 @@ export function AttendancePage() {
       const initial: Record<string, AttendanceStatus> = {}
       data.forEach(s => { initial[s.studentId] = 'present' })
       setStatuses(initial)
+      setSaved(false)
+      setSent(false)
     })
   }, [selectedCourse, teacherId, token])
 
   function setStatus(studentId: string, status: AttendanceStatus) {
     setStatuses(prev => ({ ...prev, [studentId]: status }))
+    setSaved(false)
+    setSent(false)
   }
 
   const counts = {
@@ -78,10 +128,13 @@ export function AttendancePage() {
           )}
         </div>
 
-        {selectedCourse && (
-          <button className="rounded-xl bg-primary px-5 py-2 text-sm font-semibold text-white hover:bg-primary/90 transition-colors">
-            Yoklamayı kaydet
-          </button>
+        {selectedCourse && students.length > 0 && (
+          <AttendanceActions
+            saved={saved}
+            sent={sent}
+            onSave={() => setSaved(true)}
+            onSend={() => setSent(true)}
+          />
         )}
       </div>
 
@@ -124,6 +177,16 @@ export function AttendancePage() {
       {/* Özet + öğrenci listesi */}
       {selectedCourse && students.length > 0 && (
         <>
+          {/* Kaydet / gönder */}
+          <div className="mb-6 flex justify-end">
+            <AttendanceActions
+              saved={saved}
+              sent={sent}
+              onSave={() => setSaved(true)}
+              onSend={() => setSent(true)}
+            />
+          </div>
+
           {/* Özet */}
           <div className="mb-6 flex items-center justify-between bg-white rounded-2xl border border-border px-6 py-4">
             <div className="flex items-center gap-4">
@@ -148,6 +211,8 @@ export function AttendancePage() {
                   const all: Record<string, AttendanceStatus> = {}
                   students.forEach(s => { all[s.studentId] = 'present' })
                   setStatuses(all)
+                  setSaved(false)
+                  setSent(false)
                 }}
                 className="rounded-lg border border-green-300 bg-green-50 px-3 py-1 text-xs font-semibold text-green-700 hover:bg-green-100 transition-colors"
               >

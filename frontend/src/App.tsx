@@ -7,6 +7,7 @@ import { ClassesPage } from '@/pages/teacher/ClassesPage'
 import { GradesPage as TeacherGradesPage } from '@/pages/teacher/GradesPage'
 import { AttendancePage as TeacherAttendancePage } from '@/pages/teacher/AttendancePage'
 import { ExamsPage as TeacherExamsPage } from '@/pages/teacher/ExamsPage'
+import { TeacherSchedulePage } from '@/pages/teacher/SchedulePage'
 import { StudentDetailPage } from '@/pages/teacher/StudentDetailPage'
 import { StudentDashboardPage } from '@/pages/student/DashboardPage'
 import { GradesPage } from '@/pages/student/GradesPage'
@@ -26,6 +27,7 @@ function App() {
         <Route path="/teacher" element={<TeacherLayout />}>
           <Route path="dashboard" element={<TeacherDashboardPage />} />
           <Route path="classes" element={<ClassesPage />} />
+          <Route path="schedule" element={<TeacherSchedulePage />} />
           <Route path="grades" element={<TeacherGradesPage />} />
           <Route path="attendance" element={<TeacherAttendancePage />} />
           <Route path="exams" element={<TeacherExamsPage />} />

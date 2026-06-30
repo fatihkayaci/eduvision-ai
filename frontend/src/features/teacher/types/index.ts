@@ -44,3 +44,13 @@ export interface StudentDetailState {
   course: TeacherCourse
   allStudents: ClassStudent[]
 }
+
+export interface TeacherScheduleEntry {
+  courseName: string
+  gradeLevel: number
+  section: string
+  weekday: string
+  startTime: string
+  endTime: string
+  room: string
+}

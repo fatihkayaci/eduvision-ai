@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { CheckCircle2, Save, Send } from 'lucide-react'
 import { decodeToken, initials } from '@/lib/token'
 import { getCourses, getCourseAssignments, getClassStudents, getTerms } from '@/features/teacher/api/teacherApi'
 import type { TeacherCourse, CourseAssignment, ClassStudent, Term } from '@/features/teacher/types'
@@ -14,6 +15,8 @@ export function GradesPage() {
   const [selectedAssignment, setSelectedAssignment] = useState<CourseAssignment | null>(null)
   const [students, setStudents] = useState<ClassStudent[]>([])
   const [grades, setGrades] = useState<Record<string, string>>({})
+  const [saved, setSaved] = useState(false)
+  const [sent, setSent] = useState(false)
 
   useEffect(() => {
     const t = localStorage.getItem('accessToken')
@@ -45,6 +48,8 @@ export function GradesPage() {
     getClassStudents(teacherId, selectedCourse.classroomCourseId, token).then((data) => {
       setStudents(data)
       setGrades({})
+      setSaved(false)
+      setSent(false)
     })
   }, [selectedAssignment, selectedCourse, teacherId, token])
 
@@ -203,7 +208,11 @@ export function GradesPage() {
                       min={0}
                       max={100}
                       value={grades[student.studentId] ?? ''}
-                      onChange={(e) => setGrades(prev => ({ ...prev, [student.studentId]: e.target.value }))}
+                      onChange={(e) => {
+                        setGrades(prev => ({ ...prev, [student.studentId]: e.target.value }))
+                        setSaved(false)
+                        setSent(false)
+                      }}
                       placeholder="—"
                       className="w-20 rounded-lg border border-border bg-white px-3 py-1.5 text-center text-sm font-medium text-foreground outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors"
                     />
@@ -212,6 +221,35 @@ export function GradesPage() {
               ))}
             </tbody>
           </table>
+
+          <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-border">
+            {saved && (
+              <span className="flex items-center gap-1 text-xs font-medium text-green-600">
+                <CheckCircle2 className="h-3.5 w-3.5" />
+                Kaydedildi
+              </span>
+            )}
+            {sent && (
+              <span className="flex items-center gap-1 text-xs font-medium text-green-600">
+                <CheckCircle2 className="h-3.5 w-3.5" />
+                Gönderildi
+              </span>
+            )}
+            <button
+              onClick={() => setSaved(true)}
+              className="flex items-center gap-1.5 rounded-lg border border-border bg-white px-4 py-2 text-sm font-medium text-foreground hover:bg-muted transition-colors"
+            >
+              <Save className="h-3.5 w-3.5" />
+              Notları kaydet
+            </button>
+            <button
+              onClick={() => setSent(true)}
+              className="flex items-center gap-1.5 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white hover:bg-primary/90 transition-colors"
+            >
+              <Send className="h-3.5 w-3.5" />
+              Notları gönder
+            </button>
+          </div>
         </div>
       )}
 

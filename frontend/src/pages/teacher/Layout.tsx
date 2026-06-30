@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react'
 import { NavLink, Outlet } from 'react-router-dom'
-import { LayoutDashboard, Users, ClipboardList, UserX, BookOpen, Sparkles, ChevronDown, Plus } from 'lucide-react'
+import { LayoutDashboard, Users, ClipboardList, UserX, BookOpen, Sparkles, CalendarDays } from 'lucide-react'
 import { decodeToken, initials } from '@/lib/token'
 import { getCourses } from '@/features/teacher/api/teacherApi'
 import type { TeacherCourse } from '@/features/teacher/types'
@@ -14,6 +14,7 @@ export type TeacherOutletContext = {
 const navItems = [
   { to: '/teacher/dashboard',  icon: LayoutDashboard, label: 'Genel Bakış' },
   { to: '/teacher/classes',    icon: Users,           label: 'Sınıflarım' },
+  { to: '/teacher/schedule',   icon: CalendarDays,    label: 'Ders Programı' },
   { to: '/teacher/grades',     icon: ClipboardList,   label: 'Not Girişi' },
   { to: '/teacher/attendance', icon: UserX,           label: 'Yoklama' },
   { to: '/teacher/exams',      icon: BookOpen,        label: 'Ödev & Sınav' },
@@ -35,7 +36,6 @@ export function TeacherLayout() {
   const [lastName, setLastName] = useState('')
   const [courses, setCourses] = useState<TeacherCourse[]>([])
   const [activeCourse, setActiveCourse] = useState<TeacherCourse | null>(null)
-  const [classDropdownOpen, setClassDropdownOpen] = useState(false)
 
   useEffect(() => {
     const token = localStorage.getItem('accessToken')
@@ -51,10 +51,6 @@ export function TeacherLayout() {
       })
       .catch(console.error)
   }, [])
-
-  const activeLabel = activeCourse
-    ? `${activeCourse.gradeLevel}-${activeCourse.section} · ${activeCourse.courseName}`
-    : '...'
 
   const outletContext = useMemo(
     () => ({ activeCourse, courses, setActiveCourse }),
@@ -148,43 +144,6 @@ export function TeacherLayout() {
           </div>
 
           <div className="flex items-center gap-3">
-            <button className="flex items-center gap-1.5 rounded-lg bg-primary px-3 py-1.5 text-sm font-medium text-white hover:bg-primary/90 transition-colors">
-              <Plus className="h-3.5 w-3.5" />
-              Not gir
-            </button>
-
-            <div className="relative">
-              <button
-                onClick={() => setClassDropdownOpen(v => !v)}
-                className="flex items-center justify-between gap-1.5 w-44 rounded-lg border border-border bg-white px-3 py-1.5 text-sm font-medium text-foreground hover:bg-muted transition-colors"
-              >
-                {activeLabel}
-                <ChevronDown className="h-3.5 w-3.5 text-muted-foreground" />
-              </button>
-              {classDropdownOpen && (
-                <div className="absolute right-0 top-full mt-1 w-44 rounded-lg border border-border bg-white shadow-md z-10">
-                  {courses.map((c) => {
-                    const label = `${c.gradeLevel}-${c.section} · ${c.courseName}`
-                    const isActive = c.classroomCourseId === activeCourse?.classroomCourseId
-                    return (
-                      <button
-                        key={c.classroomCourseId}
-                        onClick={() => { setActiveCourse(c); setClassDropdownOpen(false) }}
-                        className={[
-                          'w-full px-3 py-2 text-left text-sm transition-colors',
-                          isActive
-                            ? 'bg-primary/10 text-primary font-medium'
-                            : 'text-foreground hover:bg-muted',
-                        ].join(' ')}
-                      >
-                        {label}
-                      </button>
-                    )
-                  })}
-                </div>
-              )}
-            </div>
-
             <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-white text-xs font-bold">
               {firstName && lastName ? initials(firstName, lastName) : '..'}
             </div>
