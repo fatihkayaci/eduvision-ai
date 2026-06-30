@@ -1,6 +1,10 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { LoginPage } from '@/pages/LoginPage'
 import { PrincipalDashboardPage } from '@/pages/principal/DashboardPage'
+import { PrincipalLayout } from '@/pages/principal/Layout'
+import { UsersPage as PrincipalUsersPage } from '@/pages/principal/UsersPage'
+import { ClassesPage as PrincipalClassesPage } from '@/pages/principal/ClassesPage'
+import { SchedulePage as PrincipalSchedulePage } from '@/pages/principal/SchedulePage'
 import { TeacherDashboardPage } from '@/pages/teacher/DashboardPage'
 import { TeacherLayout } from '@/pages/teacher/Layout'
 import { ClassesPage } from '@/pages/teacher/ClassesPage'
@@ -23,7 +27,12 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<LoginPage />} />
-        <Route path="/principal/dashboard" element={<PrincipalDashboardPage />} />
+        <Route path="/principal" element={<PrincipalLayout />}>
+          <Route path="dashboard" element={<PrincipalDashboardPage />} />
+          <Route path="users" element={<PrincipalUsersPage />} />
+          <Route path="classes" element={<PrincipalClassesPage />} />
+          <Route path="schedule" element={<PrincipalSchedulePage />} />
+        </Route>
         <Route path="/teacher" element={<TeacherLayout />}>
           <Route path="dashboard" element={<TeacherDashboardPage />} />
           <Route path="classes" element={<ClassesPage />} />
