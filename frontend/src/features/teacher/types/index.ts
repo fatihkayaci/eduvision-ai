@@ -52,5 +52,4 @@ export interface TeacherScheduleEntry {
   weekday: string
   startTime: string
   endTime: string
-  room: string
 }
