@@ -1,10 +1,11 @@
+import { useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
 } from 'recharts'
-import { ArrowLeft, TrendingDown, TrendingUp } from 'lucide-react'
+import { ArrowLeft, TrendingDown, TrendingUp, X, Mail, MessageSquare, CheckCircle2 } from 'lucide-react'
 import { initials } from '@/lib/token'
-import type { GradePoint, StudentDetailState } from '@/features/teacher/types'
+import type { ClassStudent, GradePoint, StudentDetailState } from '@/features/teacher/types'
 
 function buildGradeHistory(avg: number): GradePoint[] {
   const meta = [
@@ -78,10 +79,82 @@ function statusBadge(student: ClassStudent) {
 
 const TOTAL_CLASSES = 55
 
+function ParentNoteModal({ student, onClose }: { student: ClassStudent; onClose: () => void }) {
+  const [message, setMessage] = useState('')
+  const [sentVia, setSentVia] = useState<'mail' | 'sms' | null>(null)
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
+      <div className="w-full max-w-md rounded-2xl bg-white border border-border shadow-xl">
+
+        <div className="flex items-center justify-between px-6 py-4 border-b border-border">
+          <h3 className="text-base font-semibold text-foreground" style={{ fontFamily: 'Sora, sans-serif' }}>
+            Veliye not gönder
+          </h3>
+          <button
+            onClick={onClose}
+            className="flex h-7 w-7 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
+          >
+            <X className="h-4 w-4" />
+          </button>
+        </div>
+
+        {sentVia ? (
+          <div className="px-6 py-8 flex flex-col items-center text-center gap-2">
+            <CheckCircle2 className="h-9 w-9 text-green-500" />
+            <p className="text-sm font-medium text-foreground">
+              {sentVia === 'mail' ? 'Mail gönderildi' : 'Mesaj gönderildi'}
+            </p>
+            <p className="text-xs text-muted-foreground">
+              {student.firstName} {student.lastName} velisine iletildi.
+            </p>
+          </div>
+        ) : (
+          <>
+            <div className="px-6 py-4">
+              <p className="text-xs text-muted-foreground mb-3">
+                {student.firstName} {student.lastName} velisine gönderilecek
+              </p>
+              <textarea
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
+                rows={5}
+                placeholder="Notunuzu buraya yazın..."
+                className="w-full resize-none rounded-xl border border-border bg-white px-3.5 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+              />
+            </div>
+
+            <div className="flex items-center gap-2.5 px-6 py-4 border-t border-border">
+              <button
+                disabled={!message.trim()}
+                onClick={() => setSentVia('mail')}
+                className="flex flex-1 items-center justify-center gap-1.5 rounded-xl border border-border bg-white py-2.5 text-sm font-semibold text-foreground hover:bg-muted transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+              >
+                <Mail className="h-4 w-4" />
+                Mail gönder
+              </button>
+              <button
+                disabled={!message.trim()}
+                onClick={() => setSentVia('sms')}
+                className="flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-primary py-2.5 text-sm font-semibold text-white hover:bg-primary/90 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+              >
+                <MessageSquare className="h-4 w-4" />
+                Mesaj gönder
+              </button>
+            </div>
+          </>
+        )}
+
+      </div>
+    </div>
+  )
+}
+
 export function StudentDetailPage() {
   const navigate = useNavigate()
   const location = useLocation()
   const state = location.state as StudentDetailState | null
+  const [noteModalOpen, setNoteModalOpen] = useState(false)
 
   if (!state) {
     navigate('/teacher/classes', { replace: true })
@@ -124,7 +197,10 @@ export function StudentDetailPage() {
             {student.firstName} {student.lastName}
           </span>
         </div>
-        <button className="rounded-lg border border-border bg-white px-4 py-1.5 text-sm font-medium text-foreground hover:bg-muted transition-colors">
+        <button
+          onClick={() => setNoteModalOpen(true)}
+          className="rounded-lg border border-border bg-white px-4 py-1.5 text-sm font-medium text-foreground hover:bg-muted transition-colors"
+        >
           Veliye not gönder
         </button>
       </div>
@@ -211,7 +287,7 @@ export function StudentDetailPage() {
                 />
                 <Tooltip
                   contentStyle={{ fontSize: 12, borderRadius: 8, border: '1px solid #e2e8f0' }}
-                  formatter={(value: number) => [`${value} puan`, 'Not']}
+                  formatter={(value) => [`${value} puan`, 'Not']}
                 />
                 <Line
                   type="monotone"
@@ -302,6 +378,10 @@ export function StudentDetailPage() {
 
         </div>
       </div>
+
+      {noteModalOpen && (
+        <ParentNoteModal student={student} onClose={() => setNoteModalOpen(false)} />
+      )}
     </div>
   )
 }

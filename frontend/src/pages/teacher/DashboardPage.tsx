@@ -3,7 +3,7 @@ import { Link, useOutletContext } from 'react-router-dom'
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Cell, LabelList, ResponsiveContainer,
 } from 'recharts'
-import { TrendingDown, ArrowRight, Sparkles } from 'lucide-react'
+import { TrendingDown, ArrowRight, Sparkles, ChevronDown } from 'lucide-react'
 import { decodeToken, initials } from '@/lib/token'
 import { getClassStudents } from '@/features/teacher/api/teacherApi'
 import type { ClassStudent } from '@/features/teacher/types'
@@ -17,10 +17,11 @@ const QUICK_STUDENTS = [
 ]
 
 export function TeacherDashboardPage() {
-  const { activeCourse } = useOutletContext<TeacherOutletContext>()
+  const { activeCourse, courses, setActiveCourse } = useOutletContext<TeacherOutletContext>()
   const [teacherId, setTeacherId] = useState('')
   const [token, setToken] = useState('')
   const [students, setStudents] = useState<ClassStudent[]>([])
+  const [classDropdownOpen, setClassDropdownOpen] = useState(false)
 
   useEffect(() => {
     const t = localStorage.getItem('accessToken')
@@ -41,6 +42,10 @@ export function TeacherDashboardPage() {
     .slice(0, 4)
 
   const courseAvg = activeCourse?.average ?? 0
+
+  const activeLabel = activeCourse
+    ? `${activeCourse.gradeLevel}-${activeCourse.section} · ${activeCourse.courseName}`
+    : '...'
 
   const gradeBins = useMemo(() => {
     const bins = [0, 0, 0, 0, 0]
@@ -63,6 +68,41 @@ export function TeacherDashboardPage() {
 
   return (
     <div className="p-8">
+
+      {/* Class selector */}
+      <div className="flex justify-end mb-4">
+        <div className="relative">
+          <button
+            onClick={() => setClassDropdownOpen((v) => !v)}
+            className="flex items-center justify-between gap-1.5 w-44 rounded-lg border border-border bg-white px-3 py-1.5 text-sm font-medium text-foreground hover:bg-muted transition-colors"
+          >
+            {activeLabel}
+            <ChevronDown className="h-3.5 w-3.5 text-muted-foreground" />
+          </button>
+          {classDropdownOpen && (
+            <div className="absolute right-0 top-full mt-1 w-44 rounded-lg border border-border bg-white shadow-md z-10">
+              {courses.map((c) => {
+                const label = `${c.gradeLevel}-${c.section} · ${c.courseName}`
+                const isActive = c.classroomCourseId === activeCourse?.classroomCourseId
+                return (
+                  <button
+                    key={c.classroomCourseId}
+                    onClick={() => { setActiveCourse(c); setClassDropdownOpen(false) }}
+                    className={[
+                      'w-full px-3 py-2 text-left text-sm transition-colors',
+                      isActive
+                        ? 'bg-primary/10 text-primary font-medium'
+                        : 'text-foreground hover:bg-muted',
+                    ].join(' ')}
+                  >
+                    {label}
+                  </button>
+                )
+              })}
+            </div>
+          )}
+        </div>
+      </div>
 
       {/* Stat cards */}
       <div className="grid grid-cols-4 gap-4 mb-6">
