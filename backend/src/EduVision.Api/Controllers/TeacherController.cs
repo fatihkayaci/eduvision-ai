@@ -1,6 +1,7 @@
 using EduVision.Application.Features.Teacher.Queries.GetClassStudents;
 using EduVision.Application.Features.Teacher.Queries.GetCourseAssignments;
 using EduVision.Application.Features.Teacher.Queries.GetCourses;
+using EduVision.Application.Features.Teacher.Queries.GetSchedule;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -35,6 +36,16 @@ public sealed class TeacherController(ISender sender) : ControllerBase
         CancellationToken cancellationToken)
     {
         var response = await sender.Send(new GetCourseAssignmentsQuery(classroomCourseId, termId), cancellationToken);
+        return Ok(response);
+    }
+
+    [HttpGet("{teacherId:guid}/schedule")]
+    public async Task<ActionResult<List<GetScheduleResponse>>> GetSchedule(
+        Guid teacherId,
+        [FromQuery] Guid termId,
+        CancellationToken cancellationToken)
+    {
+        var response = await sender.Send(new GetScheduleQuery(teacherId, termId), cancellationToken);
         return Ok(response);
     }
 }

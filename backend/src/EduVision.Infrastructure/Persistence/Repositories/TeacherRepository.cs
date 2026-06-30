@@ -2,6 +2,7 @@ using EduVision.Application.Comman.Interfaces;
 using EduVision.Application.Features.Teacher.Queries.GetClassStudents;
 using EduVision.Application.Features.Teacher.Queries.GetCourseAssignments;
 using EduVision.Application.Features.Teacher.Queries.GetCourses;
+using EduVision.Application.Features.Teacher.Queries.GetSchedule;
 using EduVision.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 
@@ -75,6 +76,23 @@ public sealed class TeacherRepository(ApplicationDbContext dbContext) : ITeacher
                 a.Title,
                 a.Type.ToString(),
                 a.DueDate))
+            .ToListAsync(cancellationToken);
+    }
+
+    public Task<List<GetScheduleResponse>> GetScheduleAsync(Guid teacherId, Guid termId, CancellationToken cancellationToken = default)
+    {
+        return dbContext.ClassSchedules
+            .AsNoTracking()
+            .Where(cs => cs.TermId == termId && cs.ClassroomCourse.TeacherId == teacherId)
+            .OrderBy(cs => cs.Weekday)
+                .ThenBy(cs => cs.StartTime)
+            .Select(cs => new GetScheduleResponse(
+                cs.ClassroomCourse.Course.Name,
+                cs.ClassroomCourse.ClassRoom.GradeLevel,
+                cs.ClassroomCourse.ClassRoom.Section,
+                cs.Weekday.ToString(),
+                cs.StartTime,
+                cs.EndTime))
             .ToListAsync(cancellationToken);
     }
 }
